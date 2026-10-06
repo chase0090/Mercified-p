@@ -128,11 +128,6 @@ function TextLink({ href, children }: { href: string; children: ReactNode }) {
   return <Link href={href} className="text-link">{children}<span aria-hidden="true">→</span></Link>;
 }
 
-function WorkItem({ item, index, onOpen }: { item: typeof works[number]; index: number; onOpen?: () => void }) {
-  const content = <><span className="work-index">{item.label}</span><div className={`photo ${item.shape}`}><img src={item.image.src} alt={item.image.alt} loading="lazy" /></div><h3>{item.category} <span aria-hidden="true">↗</span></h3></>;
-  return <div className="work-item">{onOpen ? <button className="work-link" onClick={onOpen} aria-label={`Enlarge ${item.label}`}>{content}</button> : <Link href={`/collections/${index % 2 ? 'lookbook-02' : 'lookbook-01'}`} className="work-link">{content}</Link>}</div>;
-}
-
 function ImageLightbox({ image, onClose, openerRef }: {
   image: ImageAsset;
   onClose: () => void;
@@ -168,12 +163,6 @@ function ImageLightbox({ image, onClose, openerRef }: {
 
 function HomePage() {
   usePageMeta('Home', 'MERCIFIED ARTISTRY is a Nigerian fashion practice exploring African heritage through intentional contemporary design and craftsmanship.');
-  const [selected, setSelected] = useState<ImageAsset | null>(null);
-  const lightboxOpenerRef = useRef<HTMLElement | null>(null);
-  const openLightbox = (image: ImageAsset) => {
-    lightboxOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    setSelected(image);
-  };
   return <Shell home>
     <section className="hero">
       <img className="hero-image" src={images.hero.src} alt={images.hero.alt} fetchPriority="high" />
@@ -192,64 +181,28 @@ function HomePage() {
       </div>
     </section>
 
-    <section className="section compact dark-section">
-      <div className="wrap split reverse">
-        <EditorialImage image={images.designer} className="portrait" caption="Portrait concept · temporary" />
-        <div className="copy-block"><span className="eyebrow">The designer</span><h2 className="serif">Mercy<br />Ufuoma</h2><p className="eyebrow">Founder &amp; Creative Director</p><p>Mercy Ufuoma is a Nigerian fashion designer and creative entrepreneur committed to exploring the relationship between African heritage and contemporary fashion.</p><p>Her journey began early, learning from her mother, a fashion designer. It grew into a passion and fashion business with a larger vision: create fashion that tells stories, celebrates culture, and gives African heritage a place on the global stage.</p><TextLink href="/about">Meet the designer</TextLink></div>
-      </div>
-      <div className="wrap"><blockquote className="quote-block">“African fashion is not simply something to wear. It is <span>heritage, identity, storytelling</span>, and a language through which Africa can speak to the world.”</blockquote></div>
-    </section>
-
-    <section className="section dark-section" style={{ paddingTop: 96 }}>
-      <div className="wrap"><SectionHeading eyebrow="A point of view" title="The house in four ideas">An ongoing practice shaped by heritage, design, impact and a wider vision.</SectionHeading>
-        <div className="principles">
-          {([
-            ['01', 'Heritage', 'Understanding and preserving African cultural identity.', images.textile],
-            ['02', 'Design', 'Reinterpreting heritage through contemporary creativity and craftsmanship.', images.look1],
-            ['03', 'Impact', 'Creating opportunities for young creatives and exploring more sustainable approaches.', images.detail],
-            ['04', 'Global vision', 'Taking African stories, techniques and perspectives to wider audiences through fashion.', images.hero],
-          ] as const).map(([num, title, text, image]) => <article className="principle" key={num}><span className="number">{num}</span><div><h3>{title}</h3><p>{text}</p></div><img src={image.src} alt={image.alt} loading="lazy" /></article>)}
+    <section className="section compact home-explore">
+      <div className="wrap">
+        <SectionHeading eyebrow="Explore the house" title="A separate page for every chapter">Choose a section to explore. The full work archive lives on its own page, organized by category.</SectionHeading>
+        <div className="home-page-links">
+          {[
+            { label: 'About', href: '/about', description: 'Meet the designer and learn about the house.' },
+            { label: 'Collections', href: '/collections', description: 'Browse the collection archive and individual collection pages.' },
+            { label: 'Portfolio', href: '/portfolio', description: 'Explore the current work archive, organized by category.' },
+            { label: 'Heritage', href: '/heritage', description: 'Explore the house’s ongoing cultural research.' },
+            { label: 'Process', href: '/process', description: 'Follow the creative process from research to final form.' },
+            { label: 'Journal', href: '/journal', description: 'Read editorial notes on heritage and creative process.' },
+          ].map((page) => <Link key={page.href} href={page.href} className="home-page-card" data-testid={`home-page-${page.href.slice(1)}`}>
+            <span className="eyebrow">Explore</span>
+            <h3 className="serif">{page.label}</h3>
+            <p>{page.description}</p>
+            <span className="home-page-arrow" aria-hidden="true">↗</span>
+          </Link>)}
         </div>
       </div>
     </section>
 
-    <section className="section">
-      <div className="wrap"><SectionHeading eyebrow="A visual language" title="Selected work">A look into silhouette, material and expression. Images shown are temporary fashion concepts, not house campaigns.</SectionHeading>
-        <div className="work-grid">{works.map((item, index) => <WorkItem key={item.label} item={item} index={index} onOpen={() => openLightbox(item.image)} />)}</div>
-        <TextLink href="/portfolio">Explore the portfolio</TextLink>
-      </div>
-    </section>
-
-    <section className="section archive-section">
-      <div className="wrap archive-feature">
-        <EditorialImage image={images.textile} className="landscape" caption="Textile archive concept · temporary" />
-        <div className="archive-note"><span className="eyebrow">Heritage / cultural research</span><h2 className="serif">Akwécha /<br />Anioma</h2><p>A research-led space for exploring African identity, textile, culture and storytelling through the lens of fashion. This presentation is an invitation to careful inquiry—not a claim of historical authority.</p><TextLink href="/heritage">Enter the archive</TextLink></div>
-      </div>
-      <div className="wrap archive-details"><EditorialImage image={images.detail} className="landscape" caption="Material study concept" /><EditorialImage image={images.look2} className="landscape" caption="Design translation concept" /></div>
-    </section>
-
-    <section className="section">
-      <div className="wrap"><SectionHeading eyebrow="Inside the atelier" title="From idea to form">A considered process moves between thought, material and making.</SectionHeading>
-        <EditorialImage image={images.detail} className="wide" caption="Atelier concept image · temporary" />
-        <div className="process-strip">{['Research', 'Sketch', 'Material', 'Construction', 'Final form'].map((item, i) => <div className="process-step" key={item}><b>0{i + 1}</b><p>{item}</p></div>)}</div>
-        <TextLink href="/process">Explore the process</TextLink>
-      </div>
-    </section>
-
-    <section className="section compact" style={{ background: '#e2d9cc' }}>
-      <div className="wrap"><SectionHeading eyebrow="The archive" title="Collections">Chapters of design, heritage and creative exploration.</SectionHeading>
-        <div className="collection-preview">{collections.map((collection) => <article className="collection-tile" key={collection.slug}><Link href={`/collections/${collection.slug}`}><div className="photo"><img src={collection.hero.src} alt={collection.hero.alt} loading="lazy" /></div></Link><h3>{collection.title}</h3><p>{collection.year}</p><TextLink href={`/collections/${collection.slug}`}>View collection</TextLink></article>)}</div>
-      </div>
-    </section>
-
-    <section className="runway-band"><img src={images.look2.src} alt={images.look2.alt} loading="lazy" /><div className="runway-copy"><span className="eyebrow">Runway / showcases</span><h2 className="serif">On the runway</h2><p>Showcase information has not yet been supplied. This visual space is ready for confirmed event stories and imagery.</p><TextLink href="/runway">View showcases</TextLink></div></section>
-
-    <section className="section compact"><div className="wrap quiet-panel"><div><span className="eyebrow">Sustainability</span><h2 className="serif">Considered by design.</h2></div><div><p>Intentional design, craftsmanship, material awareness and longevity are important questions within the practice. This page makes no unsupported claims; its content can grow as verified approaches and project details are shared.</p><TextLink href="/sustainability">Read our approach</TextLink></div></div></section>
-
-    <section className="vision"><div className="wrap vision-inner"><div><span className="eyebrow">The horizon</span><h2>African heritage.<br />Contemporary design.<br /><em>Global vision.</em></h2><p>Rooted in Abraka, Delta State, Nigeria. Open to a wider conversation.</p></div><EditorialImage image={images.hero} className="landscape" caption="Fashion concept · temporary" /></div></section>
-
     <section className="cta"><div className="wrap cta-inner"><div><span className="eyebrow">Collaborations · opportunities · press</span><h2>Let’s create<br /><em>something intentional.</em></h2></div><TextLink href="/contact">Start a conversation</TextLink></div></section>
-    {selected && <ImageLightbox image={selected} onClose={() => setSelected(null)} openerRef={lightboxOpenerRef} />}
   </Shell>;
 }
 
@@ -285,15 +238,44 @@ function CollectionDetailPage() {
 }
 
 function PortfolioPage() {
-  usePageMeta('Portfolio', 'Selected work and temporary editorial concept images from Mercified Artistry.');
+  usePageMeta('Portfolio', 'Browse the Mercified Artistry work archive, organized by category.');
+  const categories = Array.from(new Set(works.map((item) => item.category)));
+  const [activeCategory, setActiveCategory] = useState('All work');
   const [selected, setSelected] = useState<ImageAsset | null>(null);
   const lightboxOpenerRef = useRef<HTMLElement | null>(null);
   const openLightbox = (image: ImageAsset) => {
     lightboxOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setSelected(image);
   };
-  return <Shell><PageHeading label="The visual language" title="Selected work" description="An image-led portfolio structure for looks, details and process. The current images are temporary generated concepts, not actual campaigns." />
-    <section className="section compact"><div className="wrap gallery">{works.map((item) => <div className="gallery-item" key={item.label}><button className="work-link" onClick={() => openLightbox(item.image)} aria-label={`View larger: ${item.label}`}><div className="photo"><img src={item.image.src} alt={item.image.alt} loading="lazy" /></div><div className="photo-caption"><span>{item.label} · {item.category}</span><span>Concept</span></div></button></div>)}</div></section>
+  const visibleCategories = activeCategory === 'All work' ? categories : [activeCategory];
+  return <Shell><PageHeading label="The visual archive" title="Portfolio" description="Browse all current work entries grouped by category. Images are temporary generated concepts, not confirmed house campaigns." />
+    <section className="section compact"><div className="wrap">
+      <div className="portfolio-filters" role="group" aria-label="Filter portfolio by category">
+        <button type="button" onClick={() => setActiveCategory('All work')} aria-pressed={activeCategory === 'All work'} data-testid="button-filter-all-work">All work</button>
+        {categories.map((category) => <button key={category} type="button" onClick={() => setActiveCategory(category)} aria-pressed={activeCategory === category} data-testid={`button-filter-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{category}</button>)}
+      </div>
+      <div className="portfolio-note"><strong>Archive note</strong>The current entries use temporary concept imagery. Replace them with approved house work and details as they become available.</div>
+      <div className="portfolio-categories">
+        {visibleCategories.map((category) => {
+          const categoryWorks = works.filter((item) => item.category === category);
+          const categoryId = `portfolio-category-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+          return <section className="portfolio-category" key={category} aria-labelledby={categoryId}>
+            <div className="portfolio-category-heading">
+              <div><span className="eyebrow">{categoryWorks.length} {categoryWorks.length === 1 ? 'entry' : 'entries'}</span><h2 className="serif" id={categoryId}>{category}</h2></div>
+            </div>
+            <div className={`portfolio-grid count-${Math.min(categoryWorks.length, 3)}`}>
+              {categoryWorks.map((item) => <article className="portfolio-card" key={item.label}>
+                <button className="portfolio-work-image" type="button" onClick={() => openLightbox(item.image)} aria-label={`Enlarge ${item.label}`} data-testid={`button-enlarge-${item.label.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <div className={`photo ${item.shape}`}><img src={item.image.src} alt={item.image.alt} loading="lazy" /></div>
+                </button>
+                <div className="portfolio-work-meta"><span>{item.label}</span><span>{item.category}</span></div>
+                <p className="portfolio-concept-label">Temporary concept image</p>
+              </article>)}
+            </div>
+          </section>;
+        })}
+      </div>
+    </div></section>
     {selected && <ImageLightbox image={selected} onClose={() => setSelected(null)} openerRef={lightboxOpenerRef} />}</Shell>;
 }
 
