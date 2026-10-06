@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "MERCIFIED ARTISTRY"
+description = "A photography-led portfolio and editorial website for MERCIFIED ARTISTRY, a contemporary Nigerian fashion practice reimagining African heritage through intentional design and craftsmanship."
+version = "1.0.0"
+id = "artifacts/mercified-artistry"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20723
+
+[services.development]
+run = "pnpm --filter @workspace/mercified-artistry run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/mercified-artistry", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/mercified-artistry/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20723"
+BASE_PATH = "/"

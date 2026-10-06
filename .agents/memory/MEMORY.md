@@ -1,0 +1,1 @@
+- [Frontend-only scope](frontend-only-scope.md) — the fashion site is a visual prototype for later Antigravity refinement and backend integration.
