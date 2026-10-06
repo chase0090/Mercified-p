@@ -1,1 +1,2 @@
 - [Frontend-only scope](frontend-only-scope.md) — the fashion site is a visual prototype for later Antigravity refinement and backend integration.
+- [Responsive navigation direction](navigation-direction.md) — use a conventional horizontal desktop header and an unnumbered, compact mobile drawer.

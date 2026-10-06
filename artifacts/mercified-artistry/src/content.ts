@@ -85,9 +85,9 @@ export const articles = [
 
 export const navigation = [
   { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
   { label: 'Collections', href: '/collections' },
   { label: 'Portfolio', href: '/portfolio' },
-  { label: 'About', href: '/about' },
   { label: 'Heritage', href: '/heritage' },
   { label: 'Process', href: '/process' },
   { label: 'Runway', href: '/runway' },
@@ -96,6 +96,10 @@ export const navigation = [
   { label: 'Credentials', href: '/credentials' },
   { label: 'Contact', href: '/contact' },
 ];
+
+const primaryNavigationHrefs = new Set(['/', '/about', '/collections', '/portfolio', '/heritage', '/process', '/contact']);
+export const primaryNavigation = navigation.filter((item) => primaryNavigationHrefs.has(item.href));
+export const secondaryNavigation = navigation.filter((item) => !primaryNavigationHrefs.has(item.href));
 
 export const brand = {
   name: 'MERCIFIED ARTISTRY',

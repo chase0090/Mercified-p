@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, Route, Switch, useLocation, useParams } from 'wouter';
-import { articles, brand, collections, images, navigation, works, type ImageAsset } from './content';
+import { articles, brand, collections, images, navigation, primaryNavigation, secondaryNavigation, works, type ImageAsset } from './content';
 
 function usePageMeta(title: string, description: string) {
   useEffect(() => {
@@ -36,7 +36,21 @@ function SectionHeading({ eyebrow, title, children }: { eyebrow: string; title: 
 
 function Header({ home }: { home?: boolean }) {
   const [open, setOpen] = useState(false);
+  const [location] = useLocation();
+  const [scrolled, setScrolled] = useState(false);
   const openerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const updateScrollState = () => setScrolled(window.scrollY > 24);
+    updateScrollState();
+    window.addEventListener('scroll', updateScrollState, { passive: true });
+    return () => window.removeEventListener('scroll', updateScrollState);
+  }, []);
+
+  const isCurrent = (href: string) =>
+    location === href ||
+    ((href === '/collections' || href === '/journal') && location.startsWith(`${href}/`));
+
   useEffect(() => {
     if (!open) return;
     const prior = document.body.style.overflow;
@@ -61,25 +75,36 @@ function Header({ home }: { home?: boolean }) {
     window.setTimeout(() => openerRef.current?.focus(), 0);
   };
   return <>
-    <header className={`header ${home ? '' : 'is-light'}`}>
-      <Link href="/" className="brand" aria-label="Mercified Artistry home">MERCIFIED ARTISTRY</Link>
+    <header className={`header ${home ? '' : 'is-light'} ${scrolled ? 'is-scrolled' : ''}`} data-testid="site-header">
+      <Link href="/" className="brand" aria-label="Mercified Artistry home" data-testid="link-brand-home">MERCIFIED ARTISTRY</Link>
       <nav className="desktop-nav" aria-label="Primary navigation">
-        {navigation.slice(1, 6).map((item) => <Link key={item.href} href={item.href}>{item.label}</Link>)}
+        {primaryNavigation.map((item) => {
+          const current = isCurrent(item.href);
+          return <Link key={item.href} href={item.href} className={current ? 'is-active' : ''} aria-current={current ? 'page' : undefined} data-testid={`link-primary-${item.href === '/' ? 'home' : item.href.slice(1)}`}>{item.label}</Link>;
+        })}
       </nav>
-      <div className="header-actions">
-        <Link className="header-contact" href="/contact">Contact</Link>
-        <button ref={openerRef} className="menu-trigger" aria-expanded={open} aria-controls="site-menu" onClick={() => setOpen(true)}>
-          Menu <span className="bars" aria-hidden="true"><i /><i /></span>
-        </button>
-      </div>
+      <details className={`more-menu ${secondaryNavigation.some((item) => isCurrent(item.href)) ? 'has-active' : ''}`}>
+        <summary data-testid="nav-more">More</summary>
+        <div className="more-dropdown">{secondaryNavigation.map((item) => {
+          const current = isCurrent(item.href);
+          return <Link key={item.href} href={item.href} className={current ? 'is-active' : ''} aria-current={current ? 'page' : undefined} data-testid={`link-secondary-${item.href.slice(1)}`}>{item.label}</Link>;
+        })}</div>
+      </details>
+      <button ref={openerRef} className="menu-trigger" aria-expanded={open} aria-controls="site-menu" aria-label="Open navigation menu" onClick={() => setOpen(true)} data-testid="button-open-menu">
+        Menu <span className="bars" aria-hidden="true"><i /><i /></span>
+      </button>
     </header>
-    {open && <div id="site-menu" className="menu-overlay" role="dialog" aria-modal="true" aria-label="Site navigation" onMouseDown={(event) => { if (event.target === event.currentTarget) closeAndRestore(); }}>
-      <div className="menu-close">
-        <Link href="/" className="brand" onClick={closeAndRestore}>MERCIFIED ARTISTRY</Link>
-        <button className="menu-button" onClick={closeAndRestore} aria-label="Close navigation">Close ×</button>
+    {open && <div id="site-menu" className="menu-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) closeAndRestore(); }}>
+      <div className="menu-panel" role="dialog" aria-modal="true" aria-label="Site navigation">
+        <div className="menu-close">
+          <Link href="/" className="brand" onClick={closeAndRestore} data-testid="link-drawer-brand">MERCIFIED ARTISTRY</Link>
+          <button className="menu-button" onClick={closeAndRestore} aria-label="Close navigation" data-testid="button-close-menu">Close ×</button>
+        </div>
+        <nav className="menu-links" aria-label="All pages">{navigation.map((item) => {
+          const current = isCurrent(item.href);
+          return <Link key={item.href} href={item.href} onClick={closeAndRestore} className={current ? 'is-active' : ''} aria-current={current ? 'page' : undefined} data-testid={`link-menu-${item.href === '/' ? 'home' : item.href.slice(1)}`}>{item.label}</Link>;
+        })}</nav>
       </div>
-      <nav className="menu-links" aria-label="All pages">{navigation.map((item, index) => <Link key={item.href} href={item.href} onClick={closeAndRestore}><span className="eyebrow" style={{ display: 'inline-block', width: 42, color: '#a98672', fontSize: 9 }}>0{index + 1}</span>{item.label}</Link>)}</nav>
-      <aside className="menu-side"><strong>THE HOUSE</strong>{brand.tagline}<br />{brand.location}</aside>
     </div>}
   </>;
 }

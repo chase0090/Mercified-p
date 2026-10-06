@@ -1,0 +1,390 @@
+IMPORTANT NAVIGATION CORRECTION
+
+STOP.
+
+I do NOT like the current navigation/menu design.
+
+Look at the screenshot I provided.
+
+The current navigation is showing a giant vertical numbered list:
+
+01 Home
+02 Collections
+03 Portfolio
+04 About
+05 Heritage
+06 Process
+07 Runway
+08 Journal
+09 Sustainability
+10 Credentials
+11 Contact
+
+THIS IS NOT WHAT I WANT.
+
+Remove this navigation pattern completely.
+
+I do not want the main website navigation to look like an editorial index, magazine contents page, numbered list, poster, or giant typography menu.
+
+I want a NORMAL MODERN PROFESSIONAL WEBSITE NAVIGATION.
+
+Think of how modern fashion websites and premium brand websites normally structure their desktop header.
+
+==================================================
+DESIRED DESKTOP HEADER
+==================================================
+
+Create a clean horizontal navigation bar at the top of the website.
+
+LEFT:
+
+MERCIFIED ARTISTRY
+
+CENTER / RIGHT:
+
+Home
+About
+Collections
+Portfolio
+Heritage
+Process
+Contact
+
+RIGHT:
+
+Menu icon / Menu button only if it is actually necessary.
+
+The links should appear horizontally in one clean row.
+
+Example:
+
+MERCIFIED ARTISTRY     Home   About   Collections   Portfolio   Heritage   Process   Contact
+
+Do NOT number them.
+
+Do NOT put 01, 02, 03 beside them.
+
+Do NOT stack them vertically.
+
+Do NOT make them giant serif typography.
+
+Do NOT turn the navigation into a full-screen menu on desktop.
+
+The normal horizontal navigation should always be visible on desktop.
+
+==================================================
+HEADER VISUAL STYLE
+==================================================
+
+The header should feel like a modern premium fashion website.
+
+It should be:
+
+- clean
+- simple
+- elegant
+- minimal
+- easy to understand
+- professional
+- contemporary
+- responsive
+
+The header must NOT compete with the fashion imagery.
+
+Use a sophisticated sans-serif font for navigation.
+
+Keep the brand name/logo slightly more prominent.
+
+Navigation text should be smaller than the main hero typography.
+
+Use generous spacing between navigation links.
+
+No excessive borders.
+
+No numbered labels.
+
+No decorative lines between every item.
+
+No giant typography.
+
+No complicated visual tricks.
+
+==================================================
+DESKTOP EXAMPLE
+==================================================
+
+Conceptually, I want something like:
+
+┌──────────────────────────────────────────────────────────────┐
+│ MERCIFIED ARTISTRY     Home About Collections Portfolio      │
+│                        Heritage Process Contact        MENU  │
+└──────────────────────────────────────────────────────────────┘
+
+But make the actual implementation balanced and elegant.
+
+The exact alignment can be improved visually.
+
+==================================================
+ACTIVE PAGE
+==================================================
+
+When a user is on a page:
+
+Home
+About
+Collections
+Portfolio
+Heritage
+Process
+Contact
+
+the current page should have a subtle active state.
+
+Examples:
+
+- subtle underline
+- slight opacity difference
+- small accent
+- thin bottom border
+
+Keep it extremely subtle.
+
+Do not add large boxes around the active item.
+
+==================================================
+HOVER
+==================================================
+
+On hover:
+
+- slightly change opacity
+OR
+- subtle underline animation
+OR
+- subtle accent color
+
+Nothing flashy.
+
+==================================================
+STICKY HEADER
+==================================================
+
+Make the header fixed/sticky or intelligently persistent while scrolling.
+
+At the top of the page:
+
+transparent or subtly integrated with the hero.
+
+After scrolling:
+
+transition into a slightly more solid background so the navigation remains readable.
+
+The transition should be smooth.
+
+Do not make the header huge.
+
+The header should remain compact.
+
+==================================================
+MOBILE
+==================================================
+
+On mobile, do NOT try to squeeze all navigation links into the top bar.
+
+Use:
+
+MERCIFIED ARTISTRY                         ☰
+
+The hamburger/menu button opens a clean mobile navigation.
+
+Mobile menu:
+
+Home
+About
+Collections
+Portfolio
+Heritage
+Process
+Runway
+Journal
+Sustainability
+Credentials
+Contact
+
+This mobile menu CAN be full-screen or a clean slide-in drawer.
+
+However:
+
+The giant numbered editorial list is still NOT allowed.
+
+Do not use:
+
+01
+02
+03
+04
+
+beside the links.
+
+The links should simply be:
+
+Home
+About
+Collections
+Portfolio
+Heritage
+Process
+Runway
+Journal
+Sustainability
+Credentials
+Contact
+
+Use elegant typography and spacing.
+
+==================================================
+IMPORTANT DISTINCTION
+==================================================
+
+Desktop navigation = NORMAL HORIZONTAL NAVIGATION.
+
+Mobile navigation = HAMBURGER / DRAWER.
+
+Do NOT use the mobile-style giant menu as the desktop navigation.
+
+==================================================
+HEADER CONTENT
+==================================================
+
+Use these primary navigation links:
+
+Home
+About
+Collections
+Portfolio
+Heritage
+Process
+Contact
+
+Secondary pages such as:
+
+Runway
+Journal
+Sustainability
+Credentials
+
+can be accessible through:
+
+- a "More" dropdown
+OR
+- the mobile menu
+OR
+- a subtle menu drawer
+
+Do NOT overcrowd the main desktop navbar.
+
+I prefer:
+
+Home
+About
+Collections
+Portfolio
+Heritage
+Process
+Contact
+
+as the main navigation.
+
+==================================================
+IMPORTANT
+==================================================
+
+Do not redesign the entire website again.
+
+This task is specifically to correct the navigation/header.
+
+Keep the existing page content and visual direction.
+
+Replace the current numbered editorial navigation system.
+
+Do not use the current screenshot's navigation as inspiration.
+
+The navigation should immediately look familiar to anyone who visits a modern professional website.
+
+Think:
+
+LOGO + HORIZONTAL NAVIGATION + OPTIONAL MENU
+
+NOT:
+
+GIANT NUMBERED PAGE INDEX.
+
+==================================================
+REFERENCE PRINCIPLE
+==================================================
+
+Look at the navigation structure of Gee Royale:
+
+Home
+About
+Founder
+Minayo Textile
+Collections
+Shop
+Journal
+Contact
+
+It is a normal website navigation structure rather than a giant numbered index.
+
+Use that principle, but adapt the navigation to Mercified Artistry.
+
+Do not copy Gee Royale's design.
+
+==================================================
+FINAL TEST
+==================================================
+
+After implementing this:
+
+Open the website at:
+
+1440px
+1280px
+1024px
+768px
+390px
+
+At 1440px and 1280px I should immediately see a NORMAL HORIZONTAL NAVIGATION.
+
+I should NOT see:
+
+01 Home
+02 Collections
+03 Portfolio
+04 About
+
+as a giant vertical list.
+
+I should see:
+
+MERCIFIED ARTISTRY
+
+Home
+About
+Collections
+Portfolio
+Heritage
+Process
+Contact
+
+in a clean horizontal header.
+
+On mobile I should see:
+
+MERCIFIED ARTISTRY     ☰
+
+and tapping the menu should reveal the navigation.
+
+This is a navigation correction, not an invitation to create another experimental menu.
+
+Make it normal, modern, premium and professional.
