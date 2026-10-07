@@ -1,6 +1,105 @@
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, Route, Switch, useLocation, useParams } from 'wouter';
-import { articles, brand, collections, images, navigation, primaryNavigation, secondaryNavigation, works, type ImageAsset } from './content';
+import {
+  brand,
+  images,
+  navigation,
+  works,
+  type ImageAsset,
+  type Work,
+} from './content';
+
+// ==========================================
+// LUXURY THEME CONTEXT & HOOK
+// ==========================================
+type Theme = 'light' | 'dark';
+
+const ThemeContext = createContext<{ theme: Theme; toggleTheme: () => void }>({
+  theme: 'light',
+  toggleTheme: () => {},
+});
+
+function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('ma_theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute('data-theme', theme);
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('ma_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+function useTheme() {
+  return useContext(ThemeContext);
+}
+
+// ==========================================
+// BESPOKE HAUTE COUTURE BRAND LOGO
+// ==========================================
+function Logo({ className = '', subtitle = true }: { className?: string; subtitle?: boolean }) {
+  return (
+    <Link href="/" className={`brand-logo ${className}`} aria-label="Mercified Artistry Home" data-testid="link-brand-home">
+      <div className="brand-logo-emblem" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="brand-sigil">
+          {/* Outer high-fashion diamond crest */}
+          <rect x="24" y="3" width="29.7" height="29.7" rx="2" transform="rotate(45 24 3)" stroke="currentColor" strokeWidth="1.2" strokeOpacity="0.5" />
+          {/* Inner monogram: M and A architectural intersections */}
+          <path d="M13 32V17L24 27L35 17V32" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M18 28L24 14L30 28" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+          <line x1="20" y1="24.5" x2="28" y2="24.5" stroke="currentColor" strokeWidth="1.2" />
+          {/* Apex crown jewel in terracotta/gold */}
+          <polygon points="24,6 26,9 24,12 22,9" fill="#8d5c43" />
+        </svg>
+      </div>
+      <div className="brand-logo-text">
+        <span className="brand-logo-title">MERCIFIED ARTISTRY</span>
+        {subtitle && <span className="brand-logo-subtitle">HAUTE COUTURE · NIGERIA</span>}
+      </div>
+    </Link>
+  );
+}
+
+// ==========================================
+// THEME TOGGLER BUTTON
+// ==========================================
+function ThemeToggle({ className = '' }: { className?: string; compact?: boolean }) {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <button
+      type="button"
+      className={`theme-toggle-btn ${className}`}
+      onClick={toggleTheme}
+      aria-label={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} mode`}
+      data-testid="button-theme-toggle"
+      title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} mode`}
+    >
+      <span className="theme-toggle-emoji" aria-hidden="true">
+        {theme === 'light' ? '🌙' : '☀️'}
+      </span>
+    </button>
+  );
+}
 
 function usePageMeta(title: string, description: string) {
   useEffect(() => {
@@ -23,112 +122,317 @@ function usePageMeta(title: string, description: string) {
   }, [title, description]);
 }
 
-function EditorialImage({ image, className = 'portrait', caption }: { image: ImageAsset; className?: string; caption?: string }) {
-  return <figure className="image-figure">
-    <div className={`photo ${className}`}><img src={image.src} alt={image.alt} loading="lazy" sizes="(max-width: 640px) 100vw, 70vw" /></div>
-    {caption && <figcaption className="photo-caption"><span>{caption}</span><span>Concept image · temporary</span></figcaption>}
-  </figure>;
+function EditorialImage({ image, className = 'portrait' }: { image: ImageAsset; className?: string; caption?: string }) {
+  return (
+    <figure className="image-figure">
+      <div className={`photo ${className}`}>
+        <img src={image.src} alt={image.alt} loading="lazy" sizes="(max-width: 640px) 100vw, 70vw" />
+      </div>
+    </figure>
+  );
 }
 
 function SectionHeading({ eyebrow, title, children }: { eyebrow: string; title: string; children?: ReactNode }) {
-  return <div className="section-heading"><div><span className="eyebrow">{eyebrow}</span><h2 className="serif">{title}</h2></div>{children && <p>{children}</p>}</div>;
+  return (
+    <div className="section-heading">
+      <div>
+        <span className="eyebrow">{eyebrow}</span>
+        <h2 className="serif">{title}</h2>
+      </div>
+      {children && <p>{children}</p>}
+    </div>
+  );
 }
 
+function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            observer.disconnect();
+          }
+        }
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -6% 0px' }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <div
+      ref={ref}
+      className={`reveal ${visible ? 'is-visible' : ''} ${className}`}
+      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
+    >
+      {children}
+    </div>
+  );
+}
+
+function Marquee() {
+  const items = ['African Heritage', 'Intentionally Reimagined', 'Contemporary Craft', 'Cultural Storytelling'];
+  const row = [...items, ...items, ...items];
+  return (
+    <div className="marquee" aria-hidden="true">
+      <div className="marquee-track">
+        {row.map((text, i) => (
+          <span className={i % 2 ? 'marquee-word outline' : 'marquee-word'} key={i}>
+            {text}
+            <b>·</b>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// CLEAN, FOCUSED HORIZONTAL HEADER (NO REDUNDANT ITEMS)
+// ==========================================
 function Header({ home }: { home?: boolean }) {
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [location] = useLocation();
   const [scrolled, setScrolled] = useState(false);
-  const openerRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const updateScrollState = () => setScrolled(window.scrollY > 24);
+    const updateScrollState = () => setScrolled(window.scrollY > 20);
     updateScrollState();
     window.addEventListener('scroll', updateScrollState, { passive: true });
     return () => window.removeEventListener('scroll', updateScrollState);
   }, []);
 
   const isCurrent = (href: string) =>
-    location === href ||
-    ((href === '/collections' || href === '/journal') && location.startsWith(`${href}/`));
+    href === '/' ? location === '/' : location === href || location.startsWith(`${href}/`);
 
+  // Lock body scroll when mobile menu is open
   useEffect(() => {
-    if (!open) return;
+    if (!mobileOpen) return;
     const prior = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    const firstFocusable = document.querySelector<HTMLElement>('#site-menu a');
-    firstFocusable?.focus();
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') closeAndRestore();
-      if (event.key === 'Tab') {
-        const items = Array.from(document.querySelectorAll<HTMLElement>('#site-menu a, #site-menu button'));
-        const first = items[0];
-        const last = items[items.length - 1];
-        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      if (event.key === 'Escape') {
+        setMobileOpen(false);
+        triggerRef.current?.focus();
       }
     };
     window.addEventListener('keydown', onKey);
-    return () => { document.body.style.overflow = prior; window.removeEventListener('keydown', onKey); };
-  }, [open]);
-  const closeAndRestore = () => {
-    setOpen(false);
-    window.setTimeout(() => openerRef.current?.focus(), 0);
+    return () => {
+      document.body.style.overflow = prior;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [mobileOpen]);
+
+  const closeMobile = () => {
+    setMobileOpen(false);
+    window.setTimeout(() => triggerRef.current?.focus(), 0);
   };
-  return <>
-    <header className={`header ${home ? '' : 'is-light'} ${scrolled ? 'is-scrolled' : ''}`} data-testid="site-header">
-      <Link href="/" className="brand" aria-label="Mercified Artistry home" data-testid="link-brand-home">MERCIFIED ARTISTRY</Link>
-      <nav className="desktop-nav" aria-label="Primary navigation">
-        {primaryNavigation.map((item) => {
-          const current = isCurrent(item.href);
-          return <Link key={item.href} href={item.href} className={current ? 'is-active' : ''} aria-current={current ? 'page' : undefined} data-testid={`link-primary-${item.href === '/' ? 'home' : item.href.slice(1)}`}>{item.label}</Link>;
-        })}
-      </nav>
-      <details className={`more-menu ${secondaryNavigation.some((item) => isCurrent(item.href)) ? 'has-active' : ''}`}>
-        <summary data-testid="nav-more">More</summary>
-        <div className="more-dropdown">{secondaryNavigation.map((item) => {
-          const current = isCurrent(item.href);
-          return <Link key={item.href} href={item.href} className={current ? 'is-active' : ''} aria-current={current ? 'page' : undefined} data-testid={`link-secondary-${item.href.slice(1)}`}>{item.label}</Link>;
-        })}</div>
-      </details>
-      <button ref={openerRef} className="menu-trigger" aria-expanded={open} aria-controls="site-menu" aria-label="Open navigation menu" onClick={() => setOpen(true)} data-testid="button-open-menu">
-        Menu <span className="bars" aria-hidden="true"><i /><i /></span>
-      </button>
-    </header>
-    {open && <div id="site-menu" className="menu-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) closeAndRestore(); }}>
-      <div className="menu-panel" role="dialog" aria-modal="true" aria-label="Site navigation">
-        <div className="menu-close">
-          <Link href="/" className="brand" onClick={closeAndRestore} data-testid="link-drawer-brand">MERCIFIED ARTISTRY</Link>
-          <button className="menu-button" onClick={closeAndRestore} aria-label="Close navigation" data-testid="button-close-menu">Close ×</button>
+
+  return (
+    <>
+      <header
+        className={`header ${home ? 'is-home' : 'is-light'} ${scrolled ? 'is-scrolled' : ''}`}
+        data-testid="site-header"
+      >
+        <div className="header-container">
+          {/* LEFT: MERCIFIED ARTISTRY Logo */}
+          <div className="header-left">
+            <Logo />
+          </div>
+
+          {/* CENTER / RIGHT: Clean Horizontal Navigation (Home, About, Portfolio, Runway, Journal, Contact) */}
+          <nav className="desktop-nav" aria-label="Primary navigation">
+            {navigation.map((item) => {
+              const current = isCurrent(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`nav-link ${current ? 'is-active' : ''}`}
+                  aria-current={current ? 'page' : undefined}
+                  data-testid={`link-nav-${item.href === '/' ? 'home' : item.href.slice(1)}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* RIGHT: Header Actions */}
+          <div className="header-actions">
+            <ThemeToggle />
+
+            <Link href="/contact" className="header-inquire-btn" data-testid="button-header-inquire">
+              <span>Inquire</span>
+              <span className="btn-arrow" aria-hidden="true">↗</span>
+            </Link>
+
+            {/* Mobile Hamburger Trigger (Only on mobile / tablet) */}
+            <button
+              ref={triggerRef}
+              className="mobile-menu-trigger"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-navigation-drawer"
+              aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'}
+              onClick={() => setMobileOpen((prev) => !prev)}
+              data-testid="button-open-menu"
+            >
+              <span className="hamburger-bars" aria-hidden="true">
+                <i />
+                <i />
+              </span>
+            </button>
+          </div>
         </div>
-        <nav className="menu-links" aria-label="All pages">{navigation.map((item) => {
-          const current = isCurrent(item.href);
-          return <Link key={item.href} href={item.href} onClick={closeAndRestore} className={current ? 'is-active' : ''} aria-current={current ? 'page' : undefined} data-testid={`link-menu-${item.href === '/' ? 'home' : item.href.slice(1)}`}>{item.label}</Link>;
-        })}</nav>
-      </div>
-    </div>}
-  </>;
+      </header>
+
+      {/* Clean Mobile Navigation Drawer (Unnumbered, modern, elegant) */}
+      {mobileOpen && (
+        <div
+          id="mobile-navigation-drawer"
+          className="mobile-drawer-overlay"
+          role="presentation"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeMobile();
+          }}
+        >
+          <div className="mobile-drawer-panel" role="dialog" aria-modal="true" aria-label="Site navigation">
+            <div className="mobile-drawer-top">
+              <Logo subtitle={false} />
+              <div className="mobile-drawer-top-actions">
+                <ThemeToggle compact />
+                <button
+                  type="button"
+                  className="mobile-drawer-close-btn"
+                  onClick={closeMobile}
+                  aria-label="Close navigation"
+                  data-testid="button-close-menu"
+                >
+                  <span>Close</span>
+                  <span className="close-symbol" aria-hidden="true">✕</span>
+                </button>
+              </div>
+            </div>
+
+            <nav className="mobile-drawer-links" aria-label="Mobile navigation">
+              {navigation.map((item) => {
+                const current = isCurrent(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={closeMobile}
+                    className={`mobile-nav-item ${current ? 'is-active' : ''}`}
+                    aria-current={current ? 'page' : undefined}
+                    data-testid={`link-mobile-${item.href === '/' ? 'home' : item.href.slice(1)}`}
+                  >
+                    <span className="mobile-item-label">{item.label}</span>
+                    {current && <span className="mobile-item-badge">Active</span>}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="mobile-drawer-bottom">
+              {/* Designer photo inside the menu */}
+              <div className="mobile-drawer-photo">
+                <img src={images.designer.src} alt={images.designer.alt} className="mobile-drawer-photo-img" />
+                <div className="mobile-drawer-photo-caption">
+                  <span>{brand.founder}</span>
+                  <small>{brand.role}</small>
+                </div>
+              </div>
+              <Link
+                href="/contact"
+                onClick={closeMobile}
+                className="mobile-drawer-inquire-btn"
+                data-testid="button-mobile-drawer-inquire"
+              >
+                <span>Private Consultation</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+              <div className="mobile-drawer-brand-note">
+                <strong>{brand.name}</strong>
+                <span>{brand.tagline}</span>
+                <small>{brand.location}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
+// ==========================================
+// CLEAN, SOPHISTICATED FOOTER
+// ==========================================
 function Footer() {
-  return <footer className="footer">
-    <div className="footer-top">
-      <div className="footer-brand"><h3>MERCIFIED ARTISTRY</h3><p>African Heritage,<br /><em>Intentionally Reimagined.</em></p></div>
-      <nav className="footer-nav" aria-label="Footer navigation">{navigation.slice(1).map((item) => <Link href={item.href} key={item.href}>{item.label}</Link>)}</nav>
-      <div className="footer-location">{brand.location}<br />Independent fashion practice</div>
-    </div>
-    <div className="footer-bottom"><span>© {new Date().getFullYear()} Mercified Artistry</span><span>Concept imagery is temporary and editable.</span></div>
-  </footer>;
+  return (
+    <footer className="footer">
+      <div className="footer-top">
+        <div className="footer-brand">
+          <Logo />
+          <p>
+            African Heritage,<br />
+            <em>Intentionally Reimagined.</em>
+          </p>
+        </div>
+        <nav className="footer-nav" aria-label="Footer navigation">
+          {navigation.map((item) => (
+            <Link href={item.href} key={item.href}>
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="footer-location">
+          <strong>{brand.location}</strong><br />
+          Independent Nigerian Fashion Practice<br />
+          Haute Couture &amp; Ready-to-Wear
+        </div>
+      </div>
+      <div className="footer-bottom">
+        <span>© {new Date().getFullYear()} Mercified Artistry. All rights reserved.</span>
+        <div className="footer-bottom-actions">
+          <span>Abraka, Delta State, Nigeria</span>
+          <ThemeToggle compact />
+        </div>
+      </div>
+    </footer>
+  );
 }
 
 function Shell({ children, home = false }: { children: ReactNode; home?: boolean }) {
-  return <div className="site"><Header home={home} /><main>{children}</main><Footer /></div>;
+  return (
+    <div className="site">
+      <a href="#main-content" className="skip-link">Skip to content</a>
+      <Header home={home} />
+      <main id="main-content" tabIndex={-1}>{children}</main>
+      <Footer />
+    </div>
+  );
 }
 
 function TextLink({ href, children }: { href: string; children: ReactNode }) {
-  return <Link href={href} className="text-link">{children}<span aria-hidden="true">→</span></Link>;
+  return (
+    <Link href={href} className="text-link">
+      {children}
+      <span aria-hidden="true">→</span>
+    </Link>
+  );
 }
 
-function ImageLightbox({ image, onClose, openerRef }: {
+function ImageLightbox({
+  image,
+  onClose,
+  openerRef,
+}: {
   image: ImageAsset;
   onClose: () => void;
   openerRef: { current: HTMLElement | null };
@@ -136,6 +440,8 @@ function ImageLightbox({ image, onClose, openerRef }: {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
+    const prior = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     closeButtonRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -147,7 +453,10 @@ function ImageLightbox({ image, onClose, openerRef }: {
       }
     };
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = prior;
+      window.removeEventListener('keydown', onKeyDown);
+    };
   }, [onClose, openerRef]);
 
   function close() {
@@ -155,228 +464,1264 @@ function ImageLightbox({ image, onClose, openerRef }: {
     window.setTimeout(() => openerRef.current?.focus(), 0);
   }
 
-  return <div className="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged image" tabIndex={-1} onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
-    <button ref={closeButtonRef} onClick={close} aria-label="Close image">Close ×</button>
-    <img src={image.src} alt={image.alt} />
-  </div>;
-}
-
-function HomePage() {
-  usePageMeta('Home', 'MERCIFIED ARTISTRY is a Nigerian fashion practice exploring African heritage through intentional contemporary design and craftsmanship.');
-  return <Shell home>
-    <section className="hero">
-      <img className="hero-image" src={images.hero.src} alt={images.hero.alt} fetchPriority="high" />
-      <div className="hero-copy">
-        <span className="eyebrow">Fashion practice · Abraka, Nigeria</span>
-        <h1 className="serif">African Heritage,<br /><em>Intentionally Reimagined.</em></h1>
-        <div className="hero-meta"><p>Fashion Designer &amp; Creative Director<br /><strong>{brand.founder}</strong><br />{brand.location}</p><a href="#house" className="scroll-cue">Enter the house</a></div>
-      </div>
-      <span className="hero-vertical">MERCIFIED ARTISTRY · CONCEPT IMAGE</span>
-    </section>
-
-    <section id="house" className="section">
-      <div className="wrap split">
-        <div className="copy-block"><span className="eyebrow">The house</span><h2 className="serif">Design with a point of view.</h2><p className="lead">Mercified Artistry is a Nigerian fashion practice exploring the relationship between African heritage and contemporary design.</p><p>Through intentional fashion, cultural storytelling, craftsmanship and creative expression, the house makes space for heritage to speak in a contemporary visual language.</p><TextLink href="/about">Discover the house</TextLink></div>
-        <EditorialImage image={images.look1} className="portrait" caption="Fashion concept · temporary" />
-      </div>
-    </section>
-
-    <section className="section compact home-explore">
-      <div className="wrap">
-        <SectionHeading eyebrow="Explore the house" title="A separate page for every chapter">Choose a section to explore. The full work archive lives on its own page, organized by category.</SectionHeading>
-        <div className="home-page-links">
-          {[
-            { label: 'About', href: '/about', description: 'Meet the designer and learn about the house.' },
-            { label: 'Collections', href: '/collections', description: 'Browse the collection archive and individual collection pages.' },
-            { label: 'Portfolio', href: '/portfolio', description: 'Explore the current work archive, organized by category.' },
-            { label: 'Heritage', href: '/heritage', description: 'Explore the house’s ongoing cultural research.' },
-            { label: 'Process', href: '/process', description: 'Follow the creative process from research to final form.' },
-            { label: 'Journal', href: '/journal', description: 'Read editorial notes on heritage and creative process.' },
-          ].map((page) => <Link key={page.href} href={page.href} className="home-page-card" data-testid={`home-page-${page.href.slice(1)}`}>
-            <span className="eyebrow">Explore</span>
-            <h3 className="serif">{page.label}</h3>
-            <p>{page.description}</p>
-            <span className="home-page-arrow" aria-hidden="true">↗</span>
-          </Link>)}
-        </div>
-      </div>
-    </section>
-
-    <section className="cta"><div className="wrap cta-inner"><div><span className="eyebrow">Collaborations · opportunities · press</span><h2>Let’s create<br /><em>something intentional.</em></h2></div><TextLink href="/contact">Start a conversation</TextLink></div></section>
-  </Shell>;
+  return (
+    <div
+      className="lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Enlarged image"
+      tabIndex={-1}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) close();
+      }}
+    >
+      <button ref={closeButtonRef} onClick={close} aria-label="Close image">
+        Close ×
+      </button>
+      <img src={image.src} alt={image.alt} />
+    </div>
+  );
 }
 
 function PageHeading({ label, title, description }: { label: string; title: string; description: string }) {
-  return <div className="wrap page-title"><span className="eyebrow">{label}</span><h1>{title}</h1><p>{description}</p></div>;
+  return (
+    <div className="wrap page-title">
+      <span className="eyebrow">{label}</span>
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </div>
+  );
 }
 
+// ==========================================
+// HOME PAGE
+// ==========================================
+function HomePage() {
+  usePageMeta('Home', 'MERCIFIED ARTISTRY is a Nigerian fashion practice exploring African heritage through intentional contemporary design and craftsmanship.');
+  return (
+    <Shell home>
+      <section className="hero">
+        <img className="hero-image" src={images.hero.src} alt={images.hero.alt} fetchPriority="high" />
+        <div className="hero-copy">
+          <span className="eyebrow">Fashion practice · Abraka, Nigeria</span>
+          <h1 className="serif">African Heritage,<br /><em>Intentionally Reimagined.</em></h1>
+          <div className="hero-meta">
+            <p>
+              Fashion Designer &amp; Creative Director<br />
+              <strong>{brand.founder}</strong><br />
+              {brand.location}
+            </p>
+            <a href="#house" className="scroll-cue">Enter the house</a>
+          </div>
+        </div>
+        <span className="hero-vertical">MERCIFIED ARTISTRY · ATELIER ARCHIVE</span>
+        <div className="hero-strip" aria-hidden="true">
+          <span>Atelier Archive</span>
+          <span>SS26 Couture</span>
+          <span>Heritage · Process · Sustainability</span>
+        </div>
+      </section>
+
+      <Marquee />
+
+      <section id="house" className="section">
+        <div className="wrap split">
+          <Reveal className="copy-block">
+            <span className="eyebrow">The house</span>
+            <h2 className="serif">Design with a point of view.</h2>
+            <p className="lead">Mercified Artistry is a Nigerian fashion practice exploring the relationship between African heritage and contemporary design.</p>
+            <p>Through intentional fashion, cultural storytelling, craftsmanship and creative expression, the house makes space for heritage to speak in a contemporary visual language.</p>
+            <TextLink href="/about">Discover the house</TextLink>
+          </Reveal>
+          <EditorialImage image={images.houseSection} className="portrait" />
+        </div>
+      </section>
+
+      <section className="dark-section section featured" id="featured">
+        <div className="wrap">
+          <div className="featured-heading">
+            <div>
+              <span className="eyebrow">Selected works</span>
+              <h2 className="serif">The archive, in motion.</h2>
+            </div>
+            <div className="featured-heading-aside">
+              <p>Runway, lookbook, material study and atelier detail — a working archive where every silhouette carries its cultural heritage, craft process, and circular sustainability.</p>
+              <TextLink href="/portfolio">Explore the archive</TextLink>
+            </div>
+          </div>
+          <div className="work-grid">
+            {works.slice(0, 4).map((item, i) => (
+              <article className="work-item" key={item.slug}>
+                <span className="work-index">{String(i + 1).padStart(2, '0')} · {item.category}</span>
+                <Link href={`/portfolio/${item.slug}`} className="work-link" data-testid={`home-featured-${item.slug}`}>
+                  <div className="photo portrait">
+                    <img src={item.image.src} alt={item.image.alt} loading="lazy" />
+                    <span className="work-hover">Inspect Piece&nbsp;↗</span>
+                  </div>
+                </Link>
+                <h3>
+                  <Link href={`/portfolio/${item.slug}`}>{item.title}</Link>
+                </h3>
+                <p className="work-note">{item.season} · {item.atelierHours}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="parallax-band" style={{ backgroundImage: `url(${images.hero.src})` }}>
+        <div className="parallax-copy">
+          <span className="eyebrow">The atelier · heritage in practice</span>
+          <h2 className="serif">Built on heritage,<br /><em>worn into the future.</em></h2>
+          <TextLink href="/portfolio">Enter the archive</TextLink>
+        </div>
+      </section>
+
+      <section className="section compact home-explore">
+        <div className="wrap">
+          <SectionHeading eyebrow="Explore the house" title="Chapters of the practice">
+            From the designer's philosophy to the complete archive and public showcases.
+          </SectionHeading>
+          <div className="home-page-links">
+            {[
+              { eyebrow: 'The designer', title: 'About', href: '/about', image: images.designer, note: 'Meet Mercy Ufuoma and discover the four guiding ideas behind the house.' },
+              { eyebrow: 'The archive', title: 'Portfolio', href: '/portfolio', image: images.newspaperOrigami, note: 'Ten couture silhouettes with integrated cultural heritage, atelier craft, and sustainability.' },
+              { eyebrow: 'The conversation', title: 'Contact', href: '/contact', image: images.coralCrown, note: 'Private consultations, bespoke styling, opportunities and creative collaborations.' },
+            ].map((page, index) => (
+              <Reveal key={page.href} delay={index * 90}>
+                <Link href={page.href} className="home-page-card" data-testid={`home-page-${page.href.slice(1)}`}>
+                  <div className="home-card-media">
+                    <img src={page.image.src} alt="" loading="lazy" />
+                  </div>
+                  <div className="home-card-body">
+                    <div className="home-card-top">
+                      <span className="eyebrow">{page.eyebrow}</span>
+                      <span className="home-card-num" aria-hidden="true">0{index + 1}</span>
+                    </div>
+                    <h3 className="serif">{page.title}</h3>
+                    <p>{page.note}</p>
+                    <span className="home-page-arrow" aria-hidden="true">↗</span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="cta">
+        <div className="wrap cta-inner">
+          <div>
+            <span className="eyebrow">Collaborations · opportunities · press</span>
+            <h2>Let’s create<br /><em>something intentional.</em></h2>
+          </div>
+          <TextLink href="/contact">Start a conversation</TextLink>
+        </div>
+      </section>
+    </Shell>
+  );
+}
+
+// ==========================================
+// ABOUT PAGE
+// ==========================================
 function AboutPage() {
-  usePageMeta('About', 'Meet Mercy Ufuoma and discover the philosophy of Mercified Artistry, a Nigerian fashion practice.');
-  return <Shell><PageHeading label="The designer / the house" title="About" description="A Nigerian fashion practice shaped by heritage, thoughtful design and the belief that fashion can carry stories." />
-    <section className="section compact"><div className="wrap about-intro"><EditorialImage image={images.designer} className="portrait" caption="Portrait concept · temporary" /><div><span className="eyebrow">The designer</span><h2>Mercy Ufuoma</h2><span className="eyebrow">Founder &amp; Creative Director</span><p>Mercy Ufuoma is a Nigerian fashion designer and creative entrepreneur committed to exploring the relationship between African heritage and contemporary fashion.</p><p>Her journey began early, learning from her mother, a fashion designer. It grew into a passion and fashion business with a larger vision: create fashion that tells stories, celebrates culture, and gives African heritage a place on the global stage.</p><p>Through Mercified Artistry, Mercy creates intentional, elegant, culturally inspired pieces, reinterpreting traditional influences through contemporary silhouettes, craftsmanship and creative expression.</p></div></div></section>
-    <section className="section archive-section"><div className="wrap split"><div className="copy-block"><span className="eyebrow">The house</span><h2 className="serif">MERCIFIED ARTISTRY</h2><p className="lead">African Heritage, Intentionally Reimagined.</p><p>Mercified Artistry is a Nigerian fashion practice exploring African heritage through intentional contemporary design and craftsmanship. The house brings together fashion, cultural storytelling and creative expression.</p><p>Based in {brand.location}, the practice is oriented toward an international audience while staying attentive to the meaning and context of its references.</p></div><EditorialImage image={images.look1} className="landscape" caption="Fashion concept · temporary" /></div></section>
-    <section className="section"><div className="wrap"><SectionHeading eyebrow="What we believe" title="Four guiding ideas" /><div className="values-list">{[['Heritage','Understanding and preserving African cultural identity.'],['Design','Reinterpreting heritage through contemporary creativity and craftsmanship.'],['Impact','Creating opportunities for young creatives and exploring more sustainable approaches.'],['Global vision','Taking African stories, techniques and perspectives to wider audiences through fashion.']].map(([heading, text]) => <article className="value" key={heading}><h3>{heading}</h3><p>{text}</p></article>)}</div></div></section>
-    <section className="vision"><div className="wrap vision-inner"><div><span className="eyebrow">Design philosophy</span><h2>African Heritage,<br /><em>Intentionally Reimagined.</em></h2><p>Fashion as a language for identity, story and creative possibility.</p></div><EditorialImage image={images.look2} className="landscape" caption="Fashion concept · temporary" /></div></section>
-  </Shell>;
+  usePageMeta('About', 'Meet Onobrorhie Mercy Ufuoma and discover the philosophy of Mercified Artistry, a Nigerian fashion practice.');
+  return (
+    <Shell>
+      <PageHeading
+        label="The designer / the house"
+        title="About"
+        description="A Nigerian fashion practice shaped by heritage, thoughtful design and the belief that fashion can carry stories."
+      />
+      <section className="section compact">
+        <div className="wrap about-intro">
+          <EditorialImage image={images.aboutHouse} className="portrait" />
+          <div>
+            <span className="eyebrow">The designer</span>
+            <h2>Onobrorhie Mercy Ufuoma</h2>
+            <span className="eyebrow">Founder &amp; Creative Director</span>
+            <p>Onobrorhie Mercy Ufuoma is a Nigerian fashion designer and creative entrepreneur committed to exploring the relationship between African heritage and contemporary fashion.</p>
+            <p>Her journey began early, learning from her mother, a fashion designer. It grew into a passion and fashion business with a larger vision: create fashion that tells stories, celebrates culture, and gives African heritage a place on the global stage.</p>
+            <p>Through Mercified Artistry, Mercy creates intentional, elegant, culturally inspired pieces, reinterpreting traditional influences through contemporary silhouettes, craftsmanship and creative expression.</p>
+          </div>
+        </div>
+      </section>
+      <section className="section archive-section">
+        <div className="wrap split">
+          <div className="copy-block">
+            <span className="eyebrow">The house</span>
+            <h2 className="serif">MERCIFIED ARTISTRY</h2>
+            <p className="lead">African Heritage, Intentionally Reimagined.</p>
+            <p>Mercified Artistry is a Nigerian fashion practice exploring African heritage through intentional contemporary design and craftsmanship. The house brings together fashion, cultural storytelling and creative expression.</p>
+            <p>Based in {brand.location}, the practice is oriented toward an international audience while staying attentive to the meaning and context of its references.</p>
+          </div>
+          <EditorialImage image={images.houseSection} className="portrait" />
+        </div>
+      </section>
+      <section className="section">
+        <div className="wrap">
+          <SectionHeading eyebrow="What we believe" title="Four guiding ideas" />
+          <div className="values-list">
+            {[
+              ['Heritage', 'Understanding and preserving African cultural identity.'],
+              ['Design', 'Reinterpreting heritage through contemporary creativity and craftsmanship.'],
+              ['Impact', 'Creating opportunities for young creatives and exploring more sustainable approaches.'],
+              ['Global vision', 'Taking African stories, techniques and perspectives to wider audiences through fashion.'],
+            ].map(([heading, text], i) => (
+              <article className="value" key={heading}>
+                <span className="value-number">0{i + 1}</span>
+                <h3>{heading}</h3>
+                <p>{text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="vision">
+        <div className="wrap vision-inner">
+          <div>
+            <span className="eyebrow">Design philosophy</span>
+            <h2>African Heritage,<br /><em>Intentionally Reimagined.</em></h2>
+            <p>Fashion as a language for identity, story and creative possibility.</p>
+          </div>
+          <EditorialImage image={images.designPhilosophy} className="portrait" />
+        </div>
+      </section>
+    </Shell>
+  );
 }
 
-function CollectionsPage() {
-  usePageMeta('Collections', 'Explore the Mercified Artistry collection archive.');
-  return <Shell><PageHeading label="The archive" title="Collections" description="Chapters of design, heritage and creative exploration. Collection information is locally editable; concepts shown are temporary imagery only." />
-    <section className="section compact"><div className="wrap archive-list">{collections.map((collection, index) => <article className="archive-row" key={collection.slug}><Link href={`/collections/${collection.slug}`} className="photo"><img src={collection.hero.src} alt={collection.hero.alt} loading="lazy" /></Link><div><span className="eyebrow">{collection.year}</span><h2>{collection.title}</h2><p>{collection.description}</p><TextLink href={`/collections/${collection.slug}`}>View collection</TextLink></div></article>)}</div></section></Shell>;
+// ==========================================
+// CRISPY ATELIER DOSSIER MODAL / INSPECTOR
+// ==========================================
+function AtelierDossierModal({
+  work,
+  onClose,
+  onQuickZoom,
+}: {
+  work: Work;
+  onClose: () => void;
+  onQuickZoom: (image: ImageAsset) => void;
+}) {
+  const [activeDossierTab, setActiveDossierTab] = useState<'all' | 'concept' | 'inspiration' | 'details' | 'cultural' | 'philosophy' | 'specs'>('all');
+
+  useEffect(() => {
+    const prior = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prior;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [onClose]);
+
+  const currentPhoto = work.image;
+
+  return (
+    <div
+      className="dossier-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Atelier Dossier: ${work.title}`}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="dossier-modal">
+        {/* Header Bar */}
+        <div className="dossier-header">
+          <div className="dossier-header-title">
+            <span className="eyebrow">{work.season} · {work.label}</span>
+            <h2 className="serif">{work.title}</h2>
+          </div>
+          <div className="dossier-header-actions">
+            <Link
+              href={`/contact?inquire=${encodeURIComponent(work.title)}`}
+              className="dossier-inquire-cta"
+            >
+              <span>Inquire Piece</span>
+              <span aria-hidden="true">↗</span>
+            </Link>
+            <button
+              type="button"
+              className="dossier-close-btn"
+              onClick={onClose}
+              aria-label="Close dossier"
+              data-testid="button-close-dossier"
+            >
+              Close <span aria-hidden="true">✕</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Modal Body: Split Media + Deep Dive Inspector */}
+        <div className="dossier-body">
+          {/* Left Column: Focused Primary Image */}
+          <div className="dossier-media-column">
+            <div className="dossier-main-photo">
+              <img src={currentPhoto.src} alt={currentPhoto.alt} />
+              <button
+                type="button"
+                className="dossier-zoom-btn"
+                onClick={() => onQuickZoom(currentPhoto)}
+                aria-label="Zoom current image"
+              >
+                Enlarge ⊕
+              </button>
+              <div className="dossier-photo-badge">
+                <span>{work.atelierHours}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Ordered Narrative & Atelier Dossier */}
+          <div className="dossier-content-column">
+            {/* Navigation Tabs for Fast Jumping */}
+            <div className="dossier-pillar-nav" role="tablist">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeDossierTab === 'all'}
+                className={`dossier-nav-pill ${activeDossierTab === 'all' ? 'is-active' : ''}`}
+                onClick={() => setActiveDossierTab('all')}
+              >
+                ✦ Full Dossier
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeDossierTab === 'concept'}
+                className={`dossier-nav-pill ${activeDossierTab === 'concept' ? 'is-active' : ''}`}
+                onClick={() => setActiveDossierTab('concept')}
+              >
+                01 Concept
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeDossierTab === 'inspiration'}
+                className={`dossier-nav-pill ${activeDossierTab === 'inspiration' ? 'is-active' : ''}`}
+                onClick={() => setActiveDossierTab('inspiration')}
+              >
+                02 Inspiration
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeDossierTab === 'details'}
+                className={`dossier-nav-pill ${activeDossierTab === 'details' ? 'is-active' : ''}`}
+                onClick={() => setActiveDossierTab('details')}
+              >
+                03 Details
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeDossierTab === 'cultural'}
+                className={`dossier-nav-pill ${activeDossierTab === 'cultural' ? 'is-active' : ''}`}
+                onClick={() => setActiveDossierTab('cultural')}
+              >
+                04 Cultural Story
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeDossierTab === 'philosophy'}
+                className={`dossier-nav-pill ${activeDossierTab === 'philosophy' ? 'is-active' : ''}`}
+                onClick={() => setActiveDossierTab('philosophy')}
+              >
+                05 Philosophy
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeDossierTab === 'specs'}
+                className={`dossier-nav-pill ${activeDossierTab === 'specs' ? 'is-active' : ''}`}
+                onClick={() => setActiveDossierTab('specs')}
+              >
+                ⚙ Specs
+              </button>
+            </div>
+
+            {/* ORDER 1: DESIGN CONCEPT */}
+            {(activeDossierTab === 'all' || activeDossierTab === 'concept') && (
+              <div className="dossier-card concept-highlight">
+                <div className="dossier-card-header">
+                  <span className="dossier-icon">✦</span>
+                  <div>
+                    <span className="eyebrow">01 · Design Concept</span>
+                    <h3>Contemporary Vision</h3>
+                  </div>
+                </div>
+                <p className="dossier-card-body">{work.designConcept}</p>
+              </div>
+            )}
+
+            {/* ORDER 2: INSPIRATION */}
+            {(activeDossierTab === 'all' || activeDossierTab === 'inspiration') && (
+              <div className="dossier-card inspiration-highlight">
+                <div className="dossier-card-header">
+                  <span className="dossier-icon">🏛</span>
+                  <div>
+                    <span className="eyebrow">02 · Inspiration</span>
+                    <h3>Cultural Lineage &amp; Heritage</h3>
+                  </div>
+                </div>
+                <p className="dossier-card-body">{work.inspiration}</p>
+              </div>
+            )}
+
+            {/* ORDER 3: DESIGN DETAILS */}
+            {(activeDossierTab === 'all' || activeDossierTab === 'details') && (
+              <div className="dossier-card details-highlight">
+                <div className="dossier-card-header">
+                  <span className="dossier-icon">✂</span>
+                  <div>
+                    <span className="eyebrow">03 · Design Details</span>
+                    <h3>Atelier Craft &amp; Features</h3>
+                  </div>
+                </div>
+                <ul className="dossier-details-checklist">
+                  {work.designDetails.map((detail) => (
+                    <li key={detail}>
+                      <span className="detail-bullet">◈</span>
+                      <span>{detail}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="dossier-meta-footer">
+                  <strong>Technique Focus:</strong> {work.techniqueFocus} ({work.atelierHours})
+                </div>
+              </div>
+            )}
+
+            {/* ORDER 4: CULTURAL STORY */}
+            {(activeDossierTab === 'all' || activeDossierTab === 'cultural') && (
+              <div className="dossier-card cultural-highlight">
+                <div className="dossier-card-header">
+                  <span className="dossier-icon">🌍</span>
+                  <div>
+                    <span className="eyebrow">04 · Cultural Story</span>
+                    <h3>Heritage &amp; Living Tradition</h3>
+                  </div>
+                </div>
+                <div className="dossier-card-paragraphs">
+                  {work.culturalStory.split('\n\n').map((paragraph, idx) => (
+                    <p key={idx} className="dossier-card-body">{paragraph}</p>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ORDER 5: DESIGN PHILOSOPHY */}
+            {(activeDossierTab === 'all' || activeDossierTab === 'philosophy') && (
+              <div className="dossier-card philosophy-highlight">
+                <div className="dossier-card-header">
+                  <span className="dossier-icon">❝</span>
+                  <div>
+                    <span className="eyebrow">05 · Design Philosophy</span>
+                    <h3>Atelier Guiding Ethos</h3>
+                  </div>
+                </div>
+                <div className="dossier-philosophy-box">
+                  {work.designPhilosophy.split('\n\n').map((para, idx) => {
+                    if (para.startsWith('>')) {
+                      return (
+                        <blockquote key={idx} className="dossier-pullquote">
+                          <em>{para.replace(/^>\s*/, '')}</em>
+                        </blockquote>
+                      );
+                    }
+                    return <p key={idx} className="dossier-card-body">{para}</p>;
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* SECTION: TECHNICAL SPECS TABLE */}
+            {(activeDossierTab === 'all' || activeDossierTab === 'specs') && (
+              <div className="dossier-card specs-highlight">
+                <div className="dossier-card-header">
+                  <span className="dossier-icon">⚙</span>
+                  <div>
+                    <span className="eyebrow">Garment Specifications</span>
+                    <h3>Atelier Technical Record</h3>
+                  </div>
+                </div>
+                <table className="dossier-specs-table">
+                  <tbody>
+                    <tr>
+                      <th>Silhouette</th>
+                      <td>{work.title} ({work.label})</td>
+                    </tr>
+                    <tr>
+                      <th>Silhouette Form</th>
+                      <td>{work.silhouette}</td>
+                    </tr>
+                    <tr>
+                      <th>Collection / Season</th>
+                      <td>{work.season} · {work.year}</td>
+                    </tr>
+                    <tr>
+                      <th>Materials</th>
+                      <td>{work.materials}</td>
+                    </tr>
+                    <tr>
+                      <th>Atelier Time</th>
+                      <td>{work.atelierHours}</td>
+                    </tr>
+                    <tr>
+                      <th>Key Technique</th>
+                      <td>{work.techniqueFocus}</td>
+                    </tr>
+                    <tr>
+                      <th>Atelier Origin</th>
+                      <td>{work.credits}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Inquire Action Row */}
+            <div className="dossier-footer-actions">
+              <Link
+                href={`/contact?inquire=${encodeURIComponent(work.title)}`}
+                className="dossier-order-btn"
+              >
+                <span>Request Private Consultation for this Piece</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-function CollectionDetailPage() {
-  const params = useParams<{ slug: string }>();
-  const collection = collections.find((entry) => entry.slug === params.slug);
-  usePageMeta(collection?.title ?? 'Collection', collection?.description ?? 'A Mercified Artistry collection archive entry.');
-  if (!collection) return <NotFoundPage />;
-  return <Shell><PageHeading label={`Collection / ${collection.year}`} title={collection.title} description={collection.description} />
-    <section className="wrap page-hero-image"><img src={collection.hero.src} alt={collection.hero.alt} /></section>
-    <section className="section"><div className="wrap detail-layout"><aside className="detail-sticky"><span className="eyebrow">Collection story</span><h1>{collection.title}</h1><p>{collection.story}</p><p><strong>Materials / techniques</strong><br />{collection.materials}</p><p><strong>Credits</strong><br />{collection.credits}</p><TextLink href="/collections">Back to collections</TextLink></aside><div className="detail-gallery">{collection.gallery.map((image, i) => <EditorialImage key={`${image.src}-${i}`} image={image} className={i === 0 || i === collection.gallery.length - 1 ? 'wide' : 'portrait'} caption={`Look ${String(i + 1).padStart(2, '0')}`} />)}</div></div></section>
-  </Shell>;
+// ==========================================
+// CRISPY DRESS CARD FOR EDITORIAL GRID
+// ==========================================
+function CrispyDressCard({
+  item,
+  index,
+  onOpenDossier,
+  onQuickView,
+}: {
+  item: Work;
+  index: number;
+  pillarFilter?: 'all' | 'heritage' | 'process' | 'sustainability';
+  onOpenDossier: (item: Work) => void;
+  onQuickView: (image: ImageAsset) => void;
+}) {
+  const [activeTab, setActiveTab] = useState<'concept' | 'inspiration' | 'details' | 'cultural' | 'philosophy'>('concept');
+
+  return (
+    <article className="crispy-dress-card" data-testid={`dress-card-${item.slug}`}>
+      {/* Visual Media Header */}
+      <div className="crispy-media-wrap">
+        <button
+          type="button"
+          className="crispy-media-btn"
+          onClick={() => onOpenDossier(item)}
+          aria-label={`Open atelier dossier for ${item.title}`}
+        >
+          <div className="crispy-photo">
+            <img src={item.image.src} alt={item.image.alt} loading="lazy" />
+            <div className="crispy-badge-row">
+              <span className="crispy-num-badge">№ {String(index + 1).padStart(2, '0')}</span>
+              <span className="crispy-season-badge">{item.season}</span>
+            </div>
+            <div className="crispy-photo-hover-cue">
+              <span>Inspect Dossier ↗</span>
+            </div>
+          </div>
+        </button>
+        <button
+          type="button"
+          className="crispy-quick-zoom"
+          onClick={() => onQuickView(item.image)}
+          aria-label={`Enlarge photo for ${item.title}`}
+        >
+          Zoom ⊕
+        </button>
+      </div>
+
+      {/* Card Content & Meta */}
+      <div className="crispy-card-body">
+        <h3 className="crispy-card-title">
+          <button
+            type="button"
+            className="crispy-title-btn"
+            onClick={() => onOpenDossier(item)}
+          >
+            {item.title}
+          </button>
+        </h3>
+
+        {/* Ordered Write-Up Preview Tabs */}
+        <div className="crispy-pillars-box">
+          <div className="crispy-pillar-tabs" role="tablist" aria-label={`Ordered sections for ${item.title}`}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'concept'}
+              className={`crispy-tab-btn ${activeTab === 'concept' ? 'is-active' : ''}`}
+              onClick={() => setActiveTab('concept')}
+            >
+              ✦ Concept
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'inspiration'}
+              className={`crispy-tab-btn ${activeTab === 'inspiration' ? 'is-active' : ''}`}
+              onClick={() => setActiveTab('inspiration')}
+            >
+              🏛 Inspiration
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'details'}
+              className={`crispy-tab-btn ${activeTab === 'details' ? 'is-active' : ''}`}
+              onClick={() => setActiveTab('details')}
+            >
+              ✂ Details
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'cultural'}
+              className={`crispy-tab-btn ${activeTab === 'cultural' ? 'is-active' : ''}`}
+              onClick={() => setActiveTab('cultural')}
+            >
+              🌍 Story
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'philosophy'}
+              className={`crispy-tab-btn ${activeTab === 'philosophy' ? 'is-active' : ''}`}
+              onClick={() => setActiveTab('philosophy')}
+            >
+              ❝ Ethos
+            </button>
+          </div>
+
+          <div className="crispy-pillar-panel" role="tabpanel">
+            {activeTab === 'concept' && (
+              <div className="crispy-tab-content">
+                <span className="crispy-tab-kicker">01 · Design Concept</span>
+                <p>{item.designConcept}</p>
+              </div>
+            )}
+            {activeTab === 'inspiration' && (
+              <div className="crispy-tab-content">
+                <span className="crispy-tab-kicker">02 · Inspiration</span>
+                <p>{item.inspiration}</p>
+              </div>
+            )}
+            {activeTab === 'details' && (
+              <div className="crispy-tab-content">
+                <span className="crispy-tab-kicker">03 · Design Details</span>
+                <ul className="crispy-details-mini-list">
+                  {item.designDetails.slice(0, 3).map((d) => (
+                    <li key={d}>{d}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {activeTab === 'cultural' && (
+              <div className="crispy-tab-content">
+                <span className="crispy-tab-kicker">04 · Cultural Story</span>
+                <p>{item.culturalStory.split('\n\n')[0]}</p>
+              </div>
+            )}
+            {activeTab === 'philosophy' && (
+              <div className="crispy-tab-content">
+                <span className="crispy-tab-kicker">05 · Design Philosophy</span>
+                <p>{item.designPhilosophy.replace(/^>\s*/, '').split('\n\n')[0]}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Action Button Row */}
+        <div className="crispy-card-actions">
+          <button
+            type="button"
+            className="crispy-dossier-trigger"
+            onClick={() => onOpenDossier(item)}
+            data-testid={`btn-dossier-${item.slug}`}
+          >
+            <span>Full Atelier Dossier</span>
+            <span aria-hidden="true">→</span>
+          </button>
+          <Link
+            href={`/portfolio/${item.slug}`}
+            className="crispy-permalink-btn"
+            title="Dedicated archive page"
+          >
+            Permalink ↗
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
 }
 
+// ==========================================
+// CRISPY SPEC SHEET TABLE VIEW (ALTERNATIVE ORGANIZED LAYOUT)
+// ==========================================
+function CrispySpecTable({
+  worksList,
+  onOpenDossier,
+  onQuickView,
+}: {
+  worksList: Work[];
+  onOpenDossier: (item: Work) => void;
+  onQuickView: (image: ImageAsset) => void;
+}) {
+  return (
+    <div className="crispy-table-container">
+      <table className="crispy-spec-table">
+        <thead>
+          <tr>
+            <th>Silhouette</th>
+            <th>Category &amp; Season</th>
+            <th>Cultural Heritage</th>
+            <th>Craft Technique</th>
+            <th>Circular Sustainability</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {worksList.map((item, idx) => (
+            <tr key={item.slug} className="crispy-table-row">
+              <td className="table-col-silhouette">
+                <div className="table-thumb-wrap">
+                  <button
+                    type="button"
+                    className="table-thumb-btn"
+                    onClick={() => onQuickView(item.image)}
+                    aria-label={`Enlarge photo for ${item.title}`}
+                  >
+                    <img src={item.image.src} alt={item.image.alt} />
+                  </button>
+                  <div>
+                    <span className="table-num">№ 0{idx + 1}</span>
+                    <strong className="table-title">{item.title}</strong>
+                    <span className="table-hours">{item.atelierHours}</span>
+                  </div>
+                </div>
+              </td>
+              <td className="table-col-category">
+                <span className="table-badge">{item.category}</span>
+                <span className="table-sub">{item.season}</span>
+              </td>
+              <td className="table-col-pillar heritage-cell">
+                <p>{item.heritage}</p>
+              </td>
+              <td className="table-col-pillar craft-cell">
+                <strong>{item.techniqueFocus}</strong>
+                <p>{item.process[0]}</p>
+              </td>
+              <td className="table-col-pillar eco-cell">
+                <p>{item.sustainability}</p>
+              </td>
+              <td className="table-col-action">
+                <button
+                  type="button"
+                  className="table-inspect-btn"
+                  onClick={() => onOpenDossier(item)}
+                >
+                  Dossier ↗
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ==========================================
+// ORGANIZED & CRISPY PORTFOLIO PAGE
+// ==========================================
 function PortfolioPage() {
-  usePageMeta('Portfolio', 'Browse the Mercified Artistry work archive, organized by category.');
-  const categories = Array.from(new Set(works.map((item) => item.category)));
-  const [activeCategory, setActiveCategory] = useState('All work');
+  usePageMeta('Portfolio', 'Browse the Mercified Artistry portfolio — six handcrafted couture pieces rooted in African heritage and sustainable craft.');
+
+  const [dossierWork, setDossierWork] = useState<Work | null>(null);
+  const [zoomImage, setZoomImage] = useState<ImageAsset | null>(null);
+  const zoomOpenerRef = useRef<HTMLElement | null>(null);
+
+  const handleQuickZoom = (image: ImageAsset) => {
+    zoomOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setZoomImage(image);
+  };
+
+  return (
+    <Shell>
+      {/* PORTFOLIO HERO BANNER */}
+      <section className="portfolio-banner">
+        <img className="portfolio-banner-img" src={images.crimsonVeil.src} alt={images.crimsonVeil.alt} />
+        <div className="portfolio-banner-overlay" />
+        <div className="portfolio-banner-content">
+          <div className="portfolio-banner-top">
+            <span className="portfolio-banner-season">SS26 · Abraka Atelier</span>
+            <span className="portfolio-banner-badge">Archive</span>
+          </div>
+          <h1 className="portfolio-banner-title serif">Our Work</h1>
+          <p className="portfolio-banner-desc">Ten handcrafted pieces, each rooted in African culture, made by hand, and built to last.</p>
+          <div className="portfolio-banner-rule" />
+          <div className="portfolio-banner-stats">
+            <div className="pbs-tile">
+              <span className="pbs-val">{works.length}</span>
+              <span className="pbs-lbl">Pieces</span>
+            </div>
+            <div className="pbs-divider" />
+            <div className="pbs-tile">
+              <span className="pbs-val">1,735+</span>
+              <span className="pbs-lbl">Hours of Handwork</span>
+            </div>
+            <div className="pbs-divider" />
+            <div className="pbs-tile">
+              <span className="pbs-val">100%</span>
+              <span className="pbs-lbl">African Heritage</span>
+            </div>
+            <div className="pbs-divider" />
+            <div className="pbs-tile">
+              <span className="pbs-val">Zero</span>
+              <span className="pbs-lbl">Waste or Plastic</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section compact portfolio-section">
+        <div className="wrap">
+
+          {/* Clean Grid — All Works */}
+          <div className="crispy-grid-layout">
+            {works.map((item, index) => (
+              <Reveal key={item.slug} delay={index * 50}>
+                <CrispyDressCard
+                  item={item}
+                  index={index}
+                  pillarFilter="all"
+                  onOpenDossier={(w) => setDossierWork(w)}
+                  onQuickView={handleQuickZoom}
+                />
+              </Reveal>
+            ))}
+          </div>
+
+          {/* Deep-Dive Atelier Dossier Modal */}
+          {dossierWork && (
+            <AtelierDossierModal
+              work={dossierWork}
+              onClose={() => setDossierWork(null)}
+              onQuickZoom={handleQuickZoom}
+            />
+          )}
+
+          {/* Image Lightbox */}
+          {zoomImage && (
+            <ImageLightbox
+              image={zoomImage}
+              onClose={() => setZoomImage(null)}
+              openerRef={zoomOpenerRef}
+            />
+          )}
+        </div>
+      </section>
+    </Shell>
+  );
+}
+
+// ==========================================
+// PORTFOLIO DETAIL PERMALINK PAGE
+// ==========================================
+function PortfolioDetailPage() {
+  const params = useParams<{ slug: string }>();
+  const work = works.find((entry) => entry.slug === params.slug);
+  usePageMeta(work?.title ?? 'Look', work?.story ?? 'A Mercified Artistry portfolio entry.');
   const [selected, setSelected] = useState<ImageAsset | null>(null);
   const lightboxOpenerRef = useRef<HTMLElement | null>(null);
+
+  if (!work) return <NotFoundPage />;
+
   const openLightbox = (image: ImageAsset) => {
     lightboxOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setSelected(image);
   };
-  const visibleCategories = activeCategory === 'All work' ? categories : [activeCategory];
-  return <Shell><PageHeading label="The visual archive" title="Portfolio" description="Browse all current work entries grouped by category. Images are temporary generated concepts, not confirmed house campaigns." />
-    <section className="section compact"><div className="wrap">
-      <div className="portfolio-filters" role="group" aria-label="Filter portfolio by category">
-        <button type="button" onClick={() => setActiveCategory('All work')} aria-pressed={activeCategory === 'All work'} data-testid="button-filter-all-work">All work</button>
-        {categories.map((category) => <button key={category} type="button" onClick={() => setActiveCategory(category)} aria-pressed={activeCategory === category} data-testid={`button-filter-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{category}</button>)}
-      </div>
-      <div className="portfolio-note"><strong>Archive note</strong>The current entries use temporary concept imagery. Replace them with approved house work and details as they become available.</div>
-      <div className="portfolio-categories">
-        {visibleCategories.map((category) => {
-          const categoryWorks = works.filter((item) => item.category === category);
-          const categoryId = `portfolio-category-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
-          return <section className="portfolio-category" key={category} aria-labelledby={categoryId}>
-            <div className="portfolio-category-heading">
-              <div><span className="eyebrow">{categoryWorks.length} {categoryWorks.length === 1 ? 'entry' : 'entries'}</span><h2 className="serif" id={categoryId}>{category}</h2></div>
+
+  const sections = [
+    { id: 'concept', label: '01 Design Concept' },
+    { id: 'inspiration', label: '02 Inspiration' },
+    { id: 'details', label: '03 Design Details' },
+    { id: 'cultural', label: '04 Cultural Story' },
+    { id: 'philosophy', label: '05 Design Philosophy' },
+    { id: 'specs', label: '06 Technical Specs' },
+    { id: 'gallery', label: 'Atelier Imagery' },
+  ];
+
+  return (
+    <Shell>
+      <PageHeading label={`${work.category} · ${work.season}`} title={work.title} description={work.designConcept} />
+      <section className="detail-hero">
+        <img src={work.image.src} alt={work.image.alt} fetchPriority="high" />
+        <span className="detail-hero-caption">{work.label} · {work.atelierHours}</span>
+      </section>
+      <section className="section detail-body">
+        <div className="wrap detail-layout">
+          <aside className="detail-sticky">
+            <span className="eyebrow">Garment Dossier</span>
+            <nav aria-label="Sections of this entry" className="detail-index">
+              {sections.map((section, index) => (
+                <a key={section.id} href={`#${section.id}`}>
+                  <b>{String(index + 1).padStart(2, '0')}</b>
+                  {section.label}
+                </a>
+              ))}
+            </nav>
+
+            <div className="detail-fact-tile">
+              <strong>Key Elements</strong>
+              <div className="detail-element-tags">
+                {work.keyElements.map((el) => (
+                  <span key={el} className="element-pill">{el}</span>
+                ))}
+              </div>
             </div>
-            <div className={`portfolio-grid count-${Math.min(categoryWorks.length, 3)}`}>
-              {categoryWorks.map((item) => <article className="portfolio-card" key={item.label}>
-                <button className="portfolio-work-image" type="button" onClick={() => openLightbox(item.image)} aria-label={`Enlarge ${item.label}`} data-testid={`button-enlarge-${item.label.toLowerCase().replace(/\s+/g, '-')}`}>
-                  <div className={`photo ${item.shape}`}><img src={item.image.src} alt={item.image.alt} loading="lazy" /></div>
-                </button>
-                <div className="portfolio-work-meta"><span>{item.label}</span><span>{item.category}</span></div>
-                <p className="portfolio-concept-label">Temporary concept image</p>
-              </article>)}
+
+            <p className="detail-fact">
+              <strong>Materials / techniques</strong><br />
+              {work.materials}
+            </p>
+            <p className="detail-fact">
+              <strong>Craftsmanship</strong><br />
+              {work.atelierHours} · {work.techniqueFocus}
+            </p>
+            <div style={{ marginTop: 20 }}>
+              <Link
+                href={`/contact?inquire=${encodeURIComponent(work.title)}`}
+                className="header-inquire-btn"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                <span>Inquire Silhouette</span>
+                <span aria-hidden="true">↗</span>
+              </Link>
             </div>
-          </section>;
-        })}
-      </div>
-    </div></section>
-    {selected && <ImageLightbox image={selected} onClose={() => setSelected(null)} openerRef={lightboxOpenerRef} />}</Shell>;
+            <div style={{ marginTop: 16 }}>
+              <TextLink href="/portfolio">Back to portfolio archive</TextLink>
+            </div>
+          </aside>
+
+          <div className="detail-features">
+            {/* ORDER 1: DESIGN CONCEPT */}
+            <section className="detail-feature" id="concept">
+              <Reveal>
+                <span className="eyebrow">01 / Design Concept</span>
+                <h2 className="serif">Contemporary Vision</h2>
+                <p className="lead">{work.designConcept}</p>
+              </Reveal>
+            </section>
+
+            {/* ORDER 2: INSPIRATION */}
+            <section className="detail-feature" id="inspiration">
+              <Reveal>
+                <span className="eyebrow">02 / Inspiration</span>
+                <h2 className="serif">Origins &amp; Cultural Lineage</h2>
+                <p className="lead">{work.inspiration}</p>
+              </Reveal>
+            </section>
+
+            {/* ORDER 3: DESIGN DETAILS */}
+            <section className="detail-feature" id="details">
+              <Reveal>
+                <span className="eyebrow">03 / Design Details</span>
+                <h2 className="serif">Atelier Features &amp; Elements</h2>
+              </Reveal>
+              <ul className="detail-feature-checklist">
+                {work.designDetails.map((detail, i) => (
+                  <li key={detail}>
+                    <b>0{i + 1}</b>
+                    <p>{detail}</p>
+                  </li>
+                ))}
+              </ul>
+              <div className="dossier-meta-footer" style={{ marginTop: 16 }}>
+                <strong>Technique Focus:</strong> {work.techniqueFocus} ({work.atelierHours})
+              </div>
+            </section>
+
+            {/* ORDER 4: CULTURAL STORY */}
+            <section className="detail-feature" id="cultural">
+              <Reveal>
+                <span className="eyebrow">04 / Cultural Story</span>
+                <h2 className="serif">Living Heritage &amp; Meaning</h2>
+                <div className="detail-paragraphs">
+                  {work.culturalStory.split('\n\n').map((paragraph, idx) => (
+                    <p key={idx} className="lead">{paragraph}</p>
+                  ))}
+                </div>
+              </Reveal>
+            </section>
+
+            {/* ORDER 5: DESIGN PHILOSOPHY */}
+            <section className="detail-feature" id="philosophy">
+              <Reveal>
+                <span className="eyebrow">05 / Design Philosophy</span>
+                <h2 className="serif">Atelier Intention &amp; Ethos</h2>
+                <div className="detail-philosophy-container">
+                  {work.designPhilosophy.split('\n\n').map((para, idx) => {
+                    if (para.startsWith('>')) {
+                      return (
+                        <blockquote key={idx} className="detail-pullquote">
+                          <em>{para.replace(/^>\s*/, '')}</em>
+                        </blockquote>
+                      );
+                    }
+                    return <p key={idx} className="lead">{para}</p>;
+                  })}
+                </div>
+              </Reveal>
+            </section>
+
+            {/* TECHNICAL SPECS */}
+            <section className="detail-feature" id="specs">
+              <Reveal>
+                <span className="eyebrow">06 / Atelier Record</span>
+                <h2 className="serif">Garment Specifications</h2>
+                <table className="dossier-specs-table" style={{ marginTop: 20 }}>
+                  <tbody>
+                    <tr>
+                      <th>Silhouette</th>
+                      <td>{work.title} ({work.label})</td>
+                    </tr>
+                    <tr>
+                      <th>Silhouette Form</th>
+                      <td>{work.silhouette}</td>
+                    </tr>
+                    <tr>
+                      <th>Collection / Season</th>
+                      <td>{work.season} · {work.year}</td>
+                    </tr>
+                    <tr>
+                      <th>Materials</th>
+                      <td>{work.materials}</td>
+                    </tr>
+                    <tr>
+                      <th>Atelier Time</th>
+                      <td>{work.atelierHours}</td>
+                    </tr>
+                    <tr>
+                      <th>Key Technique</th>
+                      <td>{work.techniqueFocus}</td>
+                    </tr>
+                    <tr>
+                      <th>Atelier Origin</th>
+                      <td>{work.credits}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Reveal>
+            </section>
+
+            {/* GALLERY */}
+            <section className="detail-feature" id="gallery">
+              <Reveal>
+                <span className="eyebrow">Atelier Imagery</span>
+                <h2 className="serif">Visual Studies</h2>
+              </Reveal>
+              <div className="detail-gallery">
+                {work.gallery.map((image, i) => (
+                  <button
+                    key={`${image.src}-${i}`}
+                    className={`gallery-frame ${i === 0 ? 'wide' : 'portrait'}`}
+                    type="button"
+                    onClick={() => openLightbox(image)}
+                    aria-label={`Enlarge image ${i + 1}`}
+                  >
+                    <img src={image.src} alt={image.alt} loading="lazy" />
+                    <span className="gallery-frame-hint" aria-hidden="true">Enlarge +</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+      {selected && <ImageLightbox image={selected} onClose={() => setSelected(null)} openerRef={lightboxOpenerRef} />}
+    </Shell>
+  );
 }
 
-function HeritagePage() {
-  usePageMeta('Heritage', 'Heritage, textile and cultural research at Mercified Artistry.');
-  return <Shell><PageHeading label="Cultural research" title="Heritage" description="African identity, textile, culture and storytelling—approached with curiosity, care and an eye toward contemporary fashion." />
-    <section className="wrap page-hero-image"><img src={images.textile.src} alt={images.textile.alt} /></section>
-    <section className="section"><div className="wrap archive-feature"><div className="archive-note"><span className="eyebrow">Akwécha / Anioma</span><h2 className="serif">An inquiry in progress.</h2><p>These references are part of an evolving cultural research space. This site does not assign unverified historical meanings or present concept images as documentary records.</p></div><EditorialImage image={images.look2} className="landscape" caption="Fashion concept · temporary" /></div></section>
-    <section className="section archive-section"><div className="wrap"><SectionHeading eyebrow="From research to expression" title="Cultural references">Research is a starting point for considered design translation, not a substitute for context or attribution.</SectionHeading><div className="archive-details"><EditorialImage image={images.textile} className="landscape" caption="Textile archive concept" /><EditorialImage image={images.detail} className="landscape" caption="Material study concept" /></div><div className="process-strip">{['Akwécha', 'Anioma', 'Textile research', 'Cultural references', 'Design translation'].map((text, i) => <div className="process-step" key={text}><b>0{i + 1}</b><p>{text}</p></div>)}</div></div></section>
-    <section className="section"><div className="wrap story-body"><span className="eyebrow">Research statement</span><p>Mercified Artistry explores how African heritage can inform contemporary fashion through thoughtful inquiry and creative expression. Specific cultural research, sourcing and attributions will be added when verified and approved.</p><TextLink href="/contact">Discuss a collaboration</TextLink></div></section></Shell>;
+// ==========================================
+// REDIRECT HANDLERS (RUNWAY IS UNDER PORTFOLIO)
+// ==========================================
+function RedirectToPortfolio() {
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    setLocation('/portfolio', { replace: true });
+  }, [setLocation]);
+  return null;
 }
 
-function ProcessPage() {
-  usePageMeta('Creative process', 'A visual introduction to the Mercified Artistry creative process.');
-  const stages = [['01', 'Research', images.textile], ['02', 'Sketch', images.detail], ['03', 'Material', images.detail], ['04', 'Experiment', images.look1], ['05', 'Construction', images.detail], ['06', 'Final form', images.look2]] as const;
-  return <Shell><PageHeading label="Inside the atelier" title="The creative process" description="A visual story moving from research and early ideas toward material, construction and final form." />
-    <section className="wrap page-hero-image"><img src={images.detail.src} alt={images.detail.alt} /></section>
-    <section className="section"><div className="wrap archive-list">{stages.map(([num, title, image], index) => <article key={num} className="archive-row"><EditorialImage image={image} className={index % 2 ? 'landscape' : 'portrait'} caption={`${title} · concept image`} /><div><span className="eyebrow">{num} / Atelier</span><h2>{title}</h2><p>{index === 0 ? 'Questions, references and observation set a direction for a design idea.' : index === 1 ? 'Early lines and proportions make the first visual decisions visible.' : index === 2 ? 'Material offers texture, movement and possibility to the emerging form.' : index === 3 ? 'Ideas develop through testing, adjustment and expressive choices.' : index === 4 ? 'Construction brings silhouette and material into a finished relationship.' : 'The final form brings the process into a considered whole.'}</p></div></article>)}</div></section></Shell>;
+function RedirectToRunway() {
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    setLocation('/portfolio?category=Runway+Editions', { replace: true });
+  }, [setLocation]);
+  return null;
 }
 
-function RunwayPage() {
-  usePageMeta('Runway & showcases', 'Showcase information and editorial placeholders for Mercified Artistry.');
-  return <Shell><PageHeading label="Public presentation" title="Runway / showcases" description="A place for confirmed showcase stories, event details and imagery. No events or runway achievements have been supplied yet." />
-    <section className="runway-band"><img src={images.look2.src} alt={images.look2.alt} /><div className="runway-copy"><span className="eyebrow">Showcase archive</span><h2>Stories to come.</h2><p>This visual space is ready for verified event name, year, location, description and approved images.</p></div></section>
-    <section className="section"><div className="wrap split"><EditorialImage image={images.look1} className="portrait" caption="Fashion concept · temporary" /><div className="copy-block"><span className="eyebrow">Event record</span><h2 className="serif">Awaiting house details</h2><p>There are no showcase entries available to publish at this time. Event information remains neutral until confirmed, so this page does not imply participation or achievements.</p><div className="status-note"><strong>Editorial placeholder</strong>Replace with approved event details and credits when available.</div></div></div></section></Shell>;
-}
-
-function JournalPage() {
-  usePageMeta('Journal', 'Stories and notes on fashion, heritage and creative process.');
-  return <Shell><PageHeading label="Notes from the house" title="Journal" description="A small editorial space for fashion, heritage and process. Stories below are editable concept copy, not published reporting." />
-    <section className="section compact"><div className="wrap archive-list">{articles.map((article) => <article className="archive-row" key={article.slug}><Link href={`/journal/${article.slug}`} className="photo"><img src={article.image.src} alt={article.image.alt} loading="lazy" /></Link><div><span className="eyebrow">{article.category} · {article.date}</span><h2>{article.title}</h2><p>{article.excerpt}</p><TextLink href={`/journal/${article.slug}`}>Read story</TextLink></div></article>)}</div></section></Shell>;
-}
-
-function ArticlePage() {
-  const params = useParams<{ slug: string }>();
-  const article = articles.find((entry) => entry.slug === params.slug);
-  usePageMeta(article?.title ?? 'Journal story', article?.excerpt ?? 'A Mercified Artistry journal entry.');
-  if (!article) return <NotFoundPage />;
-  return <Shell><PageHeading label={`${article.category} · ${article.date}`} title={article.title} description={article.excerpt} />
-    <section className="wrap page-hero-image"><img src={article.image.src} alt={article.image.alt} /></section>
-    <section className="section"><article className="wrap story-body">{article.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<div className="status-note"><strong>Editorial note</strong>This is editable placeholder copy. Verify research and attribution before publication.</div><div style={{ marginTop: 35 }}><TextLink href="/journal">Back to journal</TextLink></div></article></section>
-    <section className="section archive-section"><div className="wrap"><SectionHeading eyebrow="Continue reading" title="Related stories" /><div className="collection-preview">{articles.filter((entry) => entry.slug !== article.slug).map((entry) => <article className="collection-tile" key={entry.slug}><Link href={`/journal/${entry.slug}`}><div className="photo"><img src={entry.image.src} alt={entry.image.alt} loading="lazy" /></div></Link><h3>{entry.title}</h3><p>{entry.category} · {entry.date}</p><TextLink href={`/journal/${entry.slug}`}>Read story</TextLink></article>)}</div></div></section></Shell>;
-}
-
-function SustainabilityPage() {
-  usePageMeta('Sustainability', 'The thoughtful practice principles behind Mercified Artistry.');
-  return <Shell><PageHeading label="A considered practice" title="Sustainability" description="A space for an honest, evolving conversation about design, craftsmanship, materials and longevity—without unsupported claims." />
-    <section className="wrap page-hero-image"><img src={images.detail.src} alt={images.detail.alt} /></section>
-    <section className="section"><div className="wrap"><SectionHeading eyebrow="A thoughtful approach" title="Questions before claims">The house is committed to considering these subjects with care. Verified practices and specifics can be added as they are established.</SectionHeading><div className="values-list">{[['Intentional design','Making considered creative choices from the earliest stages of an idea.'],['Craftsmanship','Recognising the attention and skill involved in making fashion.'],['Material awareness','Treating material selection as an important part of design exploration.'],['Longevity','Considering how a garment may hold meaning beyond a single moment.'],['Responsible creative practice','Continuing to ask how a fashion practice can work with care and purpose.']].map(([title, copy]) => <article key={title} className="value"><h3>{title}</h3><p>{copy}</p></article>)}</div><div className="status-note" style={{ marginTop: 34 }}><strong>Transparent by design</strong>No certifications, statistics or environmental performance claims are made on this page.</div></div></section></Shell>;
-}
-
-function CredentialsPage() {
-  usePageMeta('Credentials', 'Professional profile and editable credentials for Mercified Artistry.');
-  const sections = ['Achievements', 'Showcases', 'Features', 'Education / Training', 'Collaborations', 'Recognition', 'Professional Development'];
-  return <Shell><PageHeading label="Professional profile" title="Credentials" description="A considered home for confirmed achievements, education, collaborations and professional milestones." />
-    <section className="section compact"><div className="wrap"><div className="page-hero-image" style={{ height: 'min(54vw, 580px)' }}><img src={images.hero.src} alt={images.hero.alt} /></div><div className="values-list" style={{ marginTop: 55 }}>{sections.map((section) => <article key={section} className="value"><span className="eyebrow">{section}</span><h3>Details pending</h3><p>Information has not been supplied. This entry is intentionally neutral and ready for verified details.</p></article>)}</div></div></section></Shell>;
-}
-
+// ==========================================
+// CONTACT PAGE
+// ==========================================
 function ContactPage() {
-  usePageMeta('Contact', 'Contact Mercified Artistry for collaborations, fashion opportunities and creative projects.');
+  usePageMeta('Contact', 'Contact Mercified Artistry for private consultations, bespoke appointments, and collaborations.');
   const [submitted, setSubmitted] = useState(false);
   const [name, setName] = useState('');
-  function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setSubmitted(true); }
-  return <Shell><PageHeading label="Contact / collaboration" title="Let’s create something intentional." description="For collaborations, fashion opportunities, showcases, creative projects and press." />
-    <section className="section compact"><div className="wrap contact-layout"><div className="copy-block"><span className="eyebrow">Start a conversation</span><h2 className="serif">Open to what comes next.</h2><p>Share a little about your idea and the best way to reach you. This form is frontend-only; your message is not transmitted or stored.</p><div style={{ marginTop: 32 }}><span className="eyebrow">Based in</span><p>{brand.location}</p></div><div className="status-note"><strong>Contact details</strong>Direct email and social links have not been supplied.</div></div>
-      <div>{submitted ? <div className="confirmation" role="status"><strong>Thank you{name ? `, ${name}` : ''}.</strong><br />Your message has been prepared. This frontend-only form did not send or store it. Please use your own email application to contact the house once an official address is available.</div> : <form className="contact-form" onSubmit={submit}>
-        <div className="field"><label htmlFor="contact-name">Name</label><input id="contact-name" name="name" value={name} onChange={(event) => setName(event.target.value)} required autoComplete="name" /></div>
-        <div className="field"><label htmlFor="contact-email">Email</label><input id="contact-email" name="email" type="email" required autoComplete="email" /></div>
-        <div className="field full"><label htmlFor="contact-subject">Subject</label><select id="contact-subject" name="subject" defaultValue="" required><option value="" disabled>Select a reason for reaching out</option><option>Collaboration</option><option>Fashion opportunity</option><option>Showcase</option><option>Creative project</option><option>Press</option><option>Other</option></select></div>
-        <div className="field full"><label htmlFor="contact-message">Message</label><textarea id="contact-message" name="message" required /></div>
-        <button className="submit-button" type="submit">Prepare message →</button>
-      </form>}</div></div></section></Shell>;
+  const [inquireParam, setInquireParam] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const piece = urlParams.get('inquire');
+      if (piece) setInquireParam(piece);
+    }
+  }, []);
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitted(true);
+  }
+
+  return (
+    <Shell>
+      <PageHeading
+        label="Private consultation &amp; atelier"
+        title="Let’s create something intentional."
+        description="For private couture appointments, bespoke silhouette orders, showcases, creative projects and press inquiries."
+      />
+      <section className="section compact">
+        <div className="wrap contact-layout">
+          <div className="copy-block">
+            <span className="eyebrow">Start a conversation</span>
+            <h2 className="serif">Open to what comes next.</h2>
+            <p>Every piece in the atelier is made with deliberate intention. Share a little about your project, silhouette preference, or inquiry.</p>
+            {inquireParam && (
+              <div className="inquire-target-notice">
+                <span className="eyebrow">Silhouette Selected</span>
+                <strong>{inquireParam}</strong>
+              </div>
+            )}
+            <div style={{ marginTop: 32 }}>
+              <span className="eyebrow">Atelier Location</span>
+              <p>{brand.location}</p>
+            </div>
+            <div className="status-note">
+              <strong>Private Atelier Consultations</strong>Bespoke fittings and consultations by private appointment.
+            </div>
+          </div>
+          <div>
+            {submitted ? (
+              <div className="confirmation" role="status">
+                <strong>Thank you{name ? `, ${name}` : ''}.</strong><br />
+                Your consultation request has been prepared. This frontend-only form did not send or store it. Please reach out to our atelier representative once the official line opens.
+              </div>
+            ) : (
+              <form className="contact-form" onSubmit={submit}>
+                <div className="field">
+                  <label htmlFor="contact-name">Name</label>
+                  <input id="contact-name" name="name" value={name} onChange={(event) => setName(event.target.value)} required autoComplete="name" />
+                </div>
+                <div className="field">
+                  <label htmlFor="contact-email">Email</label>
+                  <input id="contact-email" name="email" type="email" required autoComplete="email" />
+                </div>
+                <div className="field full">
+                  <label htmlFor="contact-subject">Inquiry Type</label>
+                  <select id="contact-subject" name="subject" defaultValue={inquireParam ? 'Bespoke Couture Order' : ''} required>
+                    <option value="" disabled>Select inquiry type</option>
+                    <option value="Bespoke Couture Order">Bespoke Couture Silhouette Order</option>
+                    <option value="Private Consultation">Private Atelier Consultation</option>
+                    <option value="Showcase & Runway">Showcase &amp; Runway Feature</option>
+                    <option value="Editorial & Press">Editorial &amp; Press Feature</option>
+                    <option value="Creative Collaboration">Creative Collaboration</option>
+                  </select>
+                </div>
+                <div className="field full">
+                  <label htmlFor="contact-message">Message</label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    defaultValue={inquireParam ? `Hello, I would like to inquire about the ${inquireParam} silhouette...` : ''}
+                    required
+                  />
+                </div>
+                <button className="submit-button" type="submit">Submit Request →</button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+    </Shell>
+  );
 }
 
+// ==========================================
+// 404 NOT FOUND PAGE
+// ==========================================
 function NotFoundPage() {
   usePageMeta('Page not found', 'The requested page could not be found.');
-  return <Shell><section className="wrap not-found"><div><span className="eyebrow">404 · Not found</span><h1>Lost in the archive.</h1><p>The page you are looking for is not here.</p><TextLink href="/">Return home</TextLink></div></section></Shell>;
+  return (
+    <Shell>
+      <section className="wrap not-found">
+        <div>
+          <span className="eyebrow">404 · Not found</span>
+          <h1>Lost in the archive.</h1>
+          <p>The page you are looking for is not here.</p>
+          <TextLink href="/">Return home</TextLink>
+        </div>
+      </section>
+    </Shell>
+  );
 }
 
+// ==========================================
+// MAIN APP COMPONENT & ROUTER (CLEAN ROUTING)
+// ==========================================
 function App() {
   const [location] = useLocation();
   useEffect(() => {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, [location]);
-  return <Switch>
-    <Route path="/" component={HomePage} />
-    <Route path="/about" component={AboutPage} />
-    <Route path="/collections/:slug" component={CollectionDetailPage} />
-    <Route path="/collections" component={CollectionsPage} />
-    <Route path="/portfolio" component={PortfolioPage} />
-    <Route path="/heritage" component={HeritagePage} />
-    <Route path="/process" component={ProcessPage} />
-    <Route path="/runway" component={RunwayPage} />
-    <Route path="/journal/:slug" component={ArticlePage} />
-    <Route path="/journal" component={JournalPage} />
-    <Route path="/sustainability" component={SustainabilityPage} />
-    <Route path="/credentials" component={CredentialsPage} />
-    <Route path="/contact" component={ContactPage} />
-    <Route component={NotFoundPage} />
-  </Switch>;
+
+  return (
+    <ThemeProvider>
+      <Switch>
+        <Route path="/" component={HomePage} />
+        <Route path="/about" component={AboutPage} />
+        <Route path="/portfolio/:slug" component={PortfolioDetailPage} />
+        <Route path="/portfolio" component={PortfolioPage} />
+        <Route path="/runway" component={RedirectToRunway} />
+        <Route path="/journal/:slug" component={RedirectToPortfolio} />
+        <Route path="/journal" component={RedirectToPortfolio} />
+        <Route path="/contact" component={ContactPage} />
+        <Route component={NotFoundPage} />
+      </Switch>
+    </ThemeProvider>
+  );
 }
 
 export default App;
