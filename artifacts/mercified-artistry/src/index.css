@@ -1119,7 +1119,7 @@ main:focus { outline: none; }
 /* 3 Pillars Embedded inside Card */
 .crispy-pillars-box { background: rgba(141,92,67,.04); border: 1px solid rgba(141,92,67,.14); border-radius: 6px; padding: 12px; margin-bottom: 20px; margin-top: auto; }
 [data-theme='dark'] .crispy-pillars-box { background: rgba(201,139,109,.05); border-color: rgba(201,139,109,.14); }
-.crispy-pillar-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; border-bottom: 1px solid rgba(41,35,31,.08); padding-bottom: 8px; margin-bottom: 10px; }
+.crispy-pillar-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; border-bottom: 1px solid rgba(41,35,31,.08); padding-bottom: 8px; margin-bottom: 10px; }
 [data-theme='dark'] .crispy-pillar-tabs { border-bottom-color: rgba(244,237,228,.08); }
 .crispy-tab-btn { background: transparent; border: 0; border-radius: 4px; padding: 5px 2px; font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: inherit; opacity: .65; cursor: pointer; transition: all .2s ease; text-align: center; }
 .crispy-tab-btn:hover { opacity: .9; }
@@ -1133,15 +1133,12 @@ main:focus { outline: none; }
 .crispy-tab-content p { font-size: 11px; line-height: 1.5; margin: 0; opacity: .85; }
 .crispy-tab-content small { font-size: 9.5px; opacity: .7; margin-top: 3px; font-weight: 600; }
 
-.crispy-card-actions { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid rgba(41,35,31,.08); }
+.crispy-card-actions { display: flex; width: 100%; padding-top: 14px; border-top: 1px solid rgba(41,35,31,.08); }
 [data-theme='dark'] .crispy-card-actions { border-top-color: rgba(244,237,228,.08); }
-.crispy-dossier-trigger { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 9999px; background: #29231f; color: #f4ede4; border: 0; font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: all .2s ease; }
+.crispy-dossier-trigger { display: inline-flex; align-items: center; justify-content: center; width: 100%; gap: 8px; padding: 9px 18px; border-radius: 9999px; background: #29231f; color: #f4ede4; border: 0; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: all .2s ease; text-decoration: none; }
 .crispy-dossier-trigger:hover { background: #8d5c43; transform: translateY(-1px); }
 [data-theme='dark'] .crispy-dossier-trigger { background: #f4ede4; color: #161311; }
 [data-theme='dark'] .crispy-dossier-trigger:hover { background: #e5b196; }
-.crispy-permalink-btn { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; opacity: .7; transition: opacity .2s ease; }
-.crispy-permalink-btn:hover { opacity: 1; color: #8d5c43; }
-[data-theme='dark'] .crispy-permalink-btn:hover { color: #e5b196; }
 
 /* Technical Spec Table View */
 .crispy-table-container { overflow-x: auto; background: #fdfaf6; border: 1px solid rgba(41,35,31,.12); border-radius: 8px; }
@@ -1687,13 +1684,65 @@ main:focus { outline: none; }
   .page-title { padding:121px 0 34px; }
   .page-title h1 { font-size:57px; }
   .page-title p { font-size:13px; }
-  .portfolio-banner { height: min(460px, 72svh); min-height: 380px; margin-top: 60px; }
-  .portfolio-banner-content { padding: 0 22px 0; }
-  .portfolio-banner-title { font-size: clamp(46px, 13vw, 72px); }
-  .portfolio-banner-stats { flex-wrap: wrap; width: 100%; gap: 14px 0; padding: 16px 18px; }
+  .portfolio-banner {
+    height: auto;
+    min-height: 480px;
+    margin-top: 66px;
+    padding: 40px 0 28px;
+    display: flex;
+    align-items: flex-end;
+  }
+  .portfolio-banner-content { padding: 0 20px; }
+  .portfolio-banner-top { margin-bottom: 12px; }
+  .portfolio-banner-title { font-size: clamp(38px, 11vw, 56px); line-height: 0.95; margin-bottom: 12px; }
+  .portfolio-banner-desc { font-size: 13px; line-height: 1.6; margin-bottom: 18px; max-width: 100%; }
+  .portfolio-banner-rule { margin-bottom: 18px; }
+  .portfolio-banner-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+    gap: 14px 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-sizing: border-box;
+  }
   .pbs-divider { display: none; }
-  .pbs-tile { padding: 0 16px; flex: 1 1 40%; }
-  .pbs-tile:first-child { padding-left: 0; }
+  .pbs-tile { padding: 0; }
+  .pbs-val { font-size: 24px; }
+  .pbs-lbl { font-size: 8.5px; letter-spacing: .12em; white-space: normal; line-height: 1.3; }
+
+  /* Mobile Portfolio Grid & Dress Cards */
+  .portfolio-section { padding-top: 32px; }
+  .crispy-grid-layout { grid-template-columns: 1fr; gap: 28px; }
+  .crispy-dress-card { border-radius: 8px; }
+  .crispy-card-body { padding: 18px 16px; }
+  .crispy-card-title { font-size: 20px; margin-bottom: 14px; }
+  .crispy-pillars-box { padding: 12px; margin-bottom: 16px; }
+  .crispy-pillar-tabs {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+  }
+  .crispy-pillar-tabs::-webkit-scrollbar { display: none; }
+  .crispy-tab-btn {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    font-size: 9.5px;
+    white-space: nowrap;
+  }
+  .crispy-pillar-panel { min-height: 60px; }
+  .crispy-card-actions { display: flex; width: 100%; padding-top: 14px; }
+  .crispy-dossier-trigger {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 11px;
+    text-align: center;
+  }
   .page-hero-image { height:420px; }
   .values-list { grid-template-columns:1fr; }
   .gallery { gap:25px 10px; }

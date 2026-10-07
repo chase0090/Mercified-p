@@ -693,330 +693,16 @@ function AboutPage() {
 }
 
 // ==========================================
-// CRISPY ATELIER DOSSIER MODAL / INSPECTOR
-// ==========================================
-function AtelierDossierModal({
-  work,
-  onClose,
-  onQuickZoom,
-}: {
-  work: Work;
-  onClose: () => void;
-  onQuickZoom: (image: ImageAsset) => void;
-}) {
-  const [activeDossierTab, setActiveDossierTab] = useState<'all' | 'concept' | 'inspiration' | 'details' | 'cultural' | 'philosophy' | 'specs'>('all');
-
-  useEffect(() => {
-    const prior = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = prior;
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [onClose]);
-
-  const currentPhoto = work.image;
-
-  return (
-    <div
-      className="dossier-overlay"
-      role="dialog"
-      aria-modal="true"
-      aria-label={`Atelier Dossier: ${work.title}`}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className="dossier-modal">
-        {/* Header Bar */}
-        <div className="dossier-header">
-          <div className="dossier-header-title">
-            <span className="eyebrow">{work.season} · {work.label}</span>
-            <h2 className="serif">{work.title}</h2>
-          </div>
-          <div className="dossier-header-actions">
-            <Link
-              href={`/contact?inquire=${encodeURIComponent(work.title)}`}
-              className="dossier-inquire-cta"
-            >
-              <span>Inquire Piece</span>
-              <span aria-hidden="true">↗</span>
-            </Link>
-            <button
-              type="button"
-              className="dossier-close-btn"
-              onClick={onClose}
-              aria-label="Close dossier"
-              data-testid="button-close-dossier"
-            >
-              Close <span aria-hidden="true">✕</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Modal Body: Split Media + Deep Dive Inspector */}
-        <div className="dossier-body">
-          {/* Left Column: Focused Primary Image */}
-          <div className="dossier-media-column">
-            <div className="dossier-main-photo">
-              <img src={currentPhoto.src} alt={currentPhoto.alt} />
-              <button
-                type="button"
-                className="dossier-zoom-btn"
-                onClick={() => onQuickZoom(currentPhoto)}
-                aria-label="Zoom current image"
-              >
-                Enlarge ⊕
-              </button>
-              <div className="dossier-photo-badge">
-                <span>{work.atelierHours}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: Ordered Narrative & Atelier Dossier */}
-          <div className="dossier-content-column">
-            {/* Navigation Tabs for Fast Jumping */}
-            <div className="dossier-pillar-nav" role="tablist">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeDossierTab === 'all'}
-                className={`dossier-nav-pill ${activeDossierTab === 'all' ? 'is-active' : ''}`}
-                onClick={() => setActiveDossierTab('all')}
-              >
-                ✦ Full Dossier
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeDossierTab === 'concept'}
-                className={`dossier-nav-pill ${activeDossierTab === 'concept' ? 'is-active' : ''}`}
-                onClick={() => setActiveDossierTab('concept')}
-              >
-                01 Concept
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeDossierTab === 'inspiration'}
-                className={`dossier-nav-pill ${activeDossierTab === 'inspiration' ? 'is-active' : ''}`}
-                onClick={() => setActiveDossierTab('inspiration')}
-              >
-                02 Inspiration
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeDossierTab === 'details'}
-                className={`dossier-nav-pill ${activeDossierTab === 'details' ? 'is-active' : ''}`}
-                onClick={() => setActiveDossierTab('details')}
-              >
-                03 Details
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeDossierTab === 'cultural'}
-                className={`dossier-nav-pill ${activeDossierTab === 'cultural' ? 'is-active' : ''}`}
-                onClick={() => setActiveDossierTab('cultural')}
-              >
-                04 Cultural Story
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeDossierTab === 'philosophy'}
-                className={`dossier-nav-pill ${activeDossierTab === 'philosophy' ? 'is-active' : ''}`}
-                onClick={() => setActiveDossierTab('philosophy')}
-              >
-                05 Philosophy
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeDossierTab === 'specs'}
-                className={`dossier-nav-pill ${activeDossierTab === 'specs' ? 'is-active' : ''}`}
-                onClick={() => setActiveDossierTab('specs')}
-              >
-                ⚙ Specs
-              </button>
-            </div>
-
-            {/* ORDER 1: DESIGN CONCEPT */}
-            {(activeDossierTab === 'all' || activeDossierTab === 'concept') && (
-              <div className="dossier-card concept-highlight">
-                <div className="dossier-card-header">
-                  <span className="dossier-icon">✦</span>
-                  <div>
-                    <span className="eyebrow">01 · Design Concept</span>
-                    <h3>Contemporary Vision</h3>
-                  </div>
-                </div>
-                <p className="dossier-card-body">{work.designConcept}</p>
-              </div>
-            )}
-
-            {/* ORDER 2: INSPIRATION */}
-            {(activeDossierTab === 'all' || activeDossierTab === 'inspiration') && (
-              <div className="dossier-card inspiration-highlight">
-                <div className="dossier-card-header">
-                  <span className="dossier-icon">🏛</span>
-                  <div>
-                    <span className="eyebrow">02 · Inspiration</span>
-                    <h3>Cultural Lineage &amp; Heritage</h3>
-                  </div>
-                </div>
-                <p className="dossier-card-body">{work.inspiration}</p>
-              </div>
-            )}
-
-            {/* ORDER 3: DESIGN DETAILS */}
-            {(activeDossierTab === 'all' || activeDossierTab === 'details') && (
-              <div className="dossier-card details-highlight">
-                <div className="dossier-card-header">
-                  <span className="dossier-icon">✂</span>
-                  <div>
-                    <span className="eyebrow">03 · Design Details</span>
-                    <h3>Atelier Craft &amp; Features</h3>
-                  </div>
-                </div>
-                <ul className="dossier-details-checklist">
-                  {work.designDetails.map((detail) => (
-                    <li key={detail}>
-                      <span className="detail-bullet">◈</span>
-                      <span>{detail}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="dossier-meta-footer">
-                  <strong>Technique Focus:</strong> {work.techniqueFocus} ({work.atelierHours})
-                </div>
-              </div>
-            )}
-
-            {/* ORDER 4: CULTURAL STORY */}
-            {(activeDossierTab === 'all' || activeDossierTab === 'cultural') && (
-              <div className="dossier-card cultural-highlight">
-                <div className="dossier-card-header">
-                  <span className="dossier-icon">🌍</span>
-                  <div>
-                    <span className="eyebrow">04 · Cultural Story</span>
-                    <h3>Heritage &amp; Living Tradition</h3>
-                  </div>
-                </div>
-                <div className="dossier-card-paragraphs">
-                  {work.culturalStory.split('\n\n').map((paragraph, idx) => (
-                    <p key={idx} className="dossier-card-body">{paragraph}</p>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* ORDER 5: DESIGN PHILOSOPHY */}
-            {(activeDossierTab === 'all' || activeDossierTab === 'philosophy') && (
-              <div className="dossier-card philosophy-highlight">
-                <div className="dossier-card-header">
-                  <span className="dossier-icon">❝</span>
-                  <div>
-                    <span className="eyebrow">05 · Design Philosophy</span>
-                    <h3>Atelier Guiding Ethos</h3>
-                  </div>
-                </div>
-                <div className="dossier-philosophy-box">
-                  {work.designPhilosophy.split('\n\n').map((para, idx) => {
-                    if (para.startsWith('>')) {
-                      return (
-                        <blockquote key={idx} className="dossier-pullquote">
-                          <em>{para.replace(/^>\s*/, '')}</em>
-                        </blockquote>
-                      );
-                    }
-                    return <p key={idx} className="dossier-card-body">{para}</p>;
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* SECTION: TECHNICAL SPECS TABLE */}
-            {(activeDossierTab === 'all' || activeDossierTab === 'specs') && (
-              <div className="dossier-card specs-highlight">
-                <div className="dossier-card-header">
-                  <span className="dossier-icon">⚙</span>
-                  <div>
-                    <span className="eyebrow">Garment Specifications</span>
-                    <h3>Atelier Technical Record</h3>
-                  </div>
-                </div>
-                <table className="dossier-specs-table">
-                  <tbody>
-                    <tr>
-                      <th>Silhouette</th>
-                      <td>{work.title} ({work.label})</td>
-                    </tr>
-                    <tr>
-                      <th>Silhouette Form</th>
-                      <td>{work.silhouette}</td>
-                    </tr>
-                    <tr>
-                      <th>Collection / Season</th>
-                      <td>{work.season} · {work.year}</td>
-                    </tr>
-                    <tr>
-                      <th>Materials</th>
-                      <td>{work.materials}</td>
-                    </tr>
-                    <tr>
-                      <th>Atelier Time</th>
-                      <td>{work.atelierHours}</td>
-                    </tr>
-                    <tr>
-                      <th>Key Technique</th>
-                      <td>{work.techniqueFocus}</td>
-                    </tr>
-                    <tr>
-                      <th>Atelier Origin</th>
-                      <td>{work.credits}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {/* Inquire Action Row */}
-            <div className="dossier-footer-actions">
-              <Link
-                href={`/contact?inquire=${encodeURIComponent(work.title)}`}
-                className="dossier-order-btn"
-              >
-                <span>Request Private Consultation for this Piece</span>
-                <span aria-hidden="true">→</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ==========================================
 // CRISPY DRESS CARD FOR EDITORIAL GRID
 // ==========================================
 function CrispyDressCard({
   item,
   index,
-  onOpenDossier,
   onQuickView,
 }: {
   item: Work;
   index: number;
   pillarFilter?: 'all' | 'heritage' | 'process' | 'sustainability';
-  onOpenDossier: (item: Work) => void;
   onQuickView: (image: ImageAsset) => void;
 }) {
   const [activeTab, setActiveTab] = useState<'concept' | 'inspiration' | 'details' | 'cultural' | 'philosophy'>('concept');
@@ -1025,11 +711,10 @@ function CrispyDressCard({
     <article className="crispy-dress-card" data-testid={`dress-card-${item.slug}`}>
       {/* Visual Media Header */}
       <div className="crispy-media-wrap">
-        <button
-          type="button"
+        <Link
+          href={`/portfolio/${item.slug}`}
           className="crispy-media-btn"
-          onClick={() => onOpenDossier(item)}
-          aria-label={`Open atelier dossier for ${item.title}`}
+          aria-label={`View details for ${item.title}`}
         >
           <div className="crispy-photo">
             <img src={item.image.src} alt={item.image.alt} loading="lazy" />
@@ -1038,10 +723,10 @@ function CrispyDressCard({
               <span className="crispy-season-badge">{item.season}</span>
             </div>
             <div className="crispy-photo-hover-cue">
-              <span>Inspect Dossier ↗</span>
+              <span>View Details ↗</span>
             </div>
           </div>
-        </button>
+        </Link>
         <button
           type="button"
           className="crispy-quick-zoom"
@@ -1055,13 +740,12 @@ function CrispyDressCard({
       {/* Card Content & Meta */}
       <div className="crispy-card-body">
         <h3 className="crispy-card-title">
-          <button
-            type="button"
+          <Link
+            href={`/portfolio/${item.slug}`}
             className="crispy-title-btn"
-            onClick={() => onOpenDossier(item)}
           >
             {item.title}
-          </button>
+          </Link>
         </h3>
 
         {/* Ordered Write-Up Preview Tabs */}
@@ -1154,21 +838,13 @@ function CrispyDressCard({
 
         {/* Action Button Row */}
         <div className="crispy-card-actions">
-          <button
-            type="button"
-            className="crispy-dossier-trigger"
-            onClick={() => onOpenDossier(item)}
-            data-testid={`btn-dossier-${item.slug}`}
-          >
-            <span>Full Atelier Dossier</span>
-            <span aria-hidden="true">→</span>
-          </button>
           <Link
             href={`/portfolio/${item.slug}`}
-            className="crispy-permalink-btn"
-            title="Dedicated archive page"
+            className="crispy-dossier-trigger"
+            data-testid={`btn-detail-${item.slug}`}
           >
-            Permalink ↗
+            <span>View Full Details</span>
+            <span aria-hidden="true">→</span>
           </Link>
         </div>
       </div>
@@ -1181,11 +857,9 @@ function CrispyDressCard({
 // ==========================================
 function CrispySpecTable({
   worksList,
-  onOpenDossier,
   onQuickView,
 }: {
   worksList: Work[];
-  onOpenDossier: (item: Work) => void;
   onQuickView: (image: ImageAsset) => void;
 }) {
   return (
@@ -1236,13 +910,12 @@ function CrispySpecTable({
                 <p>{item.sustainability}</p>
               </td>
               <td className="table-col-action">
-                <button
-                  type="button"
+                <Link
+                  href={`/portfolio/${item.slug}`}
                   className="table-inspect-btn"
-                  onClick={() => onOpenDossier(item)}
                 >
-                  Dossier ↗
-                </button>
+                  View ↗
+                </Link>
               </td>
             </tr>
           ))}
@@ -1258,7 +931,7 @@ function CrispySpecTable({
 function PortfolioPage() {
   usePageMeta('Portfolio', 'Browse the Mercified Artistry portfolio — six handcrafted couture pieces rooted in African heritage and sustainable craft.');
 
-  const [dossierWork, setDossierWork] = useState<Work | null>(null);
+
   const [zoomImage, setZoomImage] = useState<ImageAsset | null>(null);
   const zoomOpenerRef = useRef<HTMLElement | null>(null);
 
@@ -1316,21 +989,13 @@ function PortfolioPage() {
                   item={item}
                   index={index}
                   pillarFilter="all"
-                  onOpenDossier={(w) => setDossierWork(w)}
                   onQuickView={handleQuickZoom}
                 />
               </Reveal>
             ))}
           </div>
 
-          {/* Deep-Dive Atelier Dossier Modal */}
-          {dossierWork && (
-            <AtelierDossierModal
-              work={dossierWork}
-              onClose={() => setDossierWork(null)}
-              onQuickZoom={handleQuickZoom}
-            />
-          )}
+
 
           {/* Image Lightbox */}
           {zoomImage && (
@@ -1383,7 +1048,7 @@ function PortfolioDetailPage() {
       <section className="section detail-body">
         <div className="wrap detail-layout">
           <aside className="detail-sticky">
-            <span className="eyebrow">Garment Dossier</span>
+            <span className="eyebrow">Garment Overview</span>
             <nav aria-label="Sections of this entry" className="detail-index">
               {sections.map((section, index) => (
                 <a key={section.id} href={`#${section.id}`}>
