@@ -952,7 +952,7 @@ function PortfolioPage() {
             <span className="portfolio-banner-badge">Archive</span>
           </div>
           <h1 className="portfolio-banner-title serif">Our Work</h1>
-          <p className="portfolio-banner-desc">Ten handcrafted pieces, each rooted in African culture, made by hand, and built to last.</p>
+          <p className="portfolio-banner-desc">Eleven handcrafted pieces, each rooted in African culture, made by hand, and built to last.</p>
           <div className="portfolio-banner-rule" />
           <div className="portfolio-banner-stats">
             <div className="pbs-tile">
@@ -960,7 +960,7 @@ function PortfolioPage() {
               <span className="pbs-lbl">Pieces</span>
             </div>
             <div className="pbs-tile">
-              <span className="pbs-val">1,660+</span>
+              <span className="pbs-val">1,835+</span>
               <span className="pbs-lbl">Hours of Handwork</span>
             </div>
             <div className="pbs-tile">

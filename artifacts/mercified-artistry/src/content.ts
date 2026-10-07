@@ -54,6 +54,7 @@ export const images = {
   bananaGrove: { src: '/images/collections/banana-grove-wrapper.jpg', alt: 'Look 08: Verdant Grove Draped Wrapper & Off-Shoulder Study — Nigerian Ankara wax wrapper beneath plantain canopy' },
   palmSanctuary: { src: '/images/collections/palm-sanctuary-ankara.jpg', alt: 'Look 09: Palm Sanctuary Spiral Handkerchief Sundress — crimson and ochre solar-spiral Ankara dress between palm trees' },
   africaPufferJacket: { src: '/images/collections/africa-quilted-puffer-jacket.jpg', alt: 'Look 10: Africa Map Quilted Puffer Jacket — cream quilted bomber with topographic Africa continent quilting and black leather trim' },
+  cobaltBallgown: { src: '/images/collections/royal-cobalt-ballgown.jpg', alt: 'Look 11: Royal Cobalt Halter Ballgown & Noir Shrug — voluminous royal cobalt blue silk taffeta ballgown with cropped bolero, fedora and azure handbag' },
   aboutHouse: { src: '/images/about-designer.png', alt: 'Onobrorhie Mercy Ufuoma — designer portrait in red couture gown with flowing scarf' },
   houseSection: { src: '/images/about-the-house.png', alt: 'Mercified Artistry — red couture gown with structured capelet, beaded clutch and sequin detailing' },
   designPhilosophy: { src: '/images/design-philosophy.png', alt: 'Design Philosophy — sculptural teal and gold couture gown with handcrafted reed waist adornments by Mercified Artistry' },
@@ -603,6 +604,57 @@ export const works: Work[] = [
     materials:
       'Quilted polyester-cotton blend shell, polyester wadding insulation, vegetable-tanned genuine leather trim, metal zip hardware, cotton-polyester lining.',
     credits: 'Creative Direction: Mercy Ufuoma · Atelier Craft: Mercified Artistry Abraka | 2026.',
+  },
+  {
+    slug: 'look-11',
+    label: 'LOOK 11',
+    title: 'Royal Cobalt Halter Ballgown & Noir Shrug',
+    category: 'Runway Editions',
+    year: '2026',
+    season: '2026 Runway & Red Carpet Edition',
+    atelierHours: '175 Atelier Hours',
+    techniqueFocus: 'Radial Pleated Circle Skirt & Contoured Halter Tailoring',
+    shape: 'portrait',
+    image: images.cobaltBallgown,
+    gallery: [images.cobaltBallgown],
+    designConcept:
+      'An imposing evening ensemble uniting a radiant royal cobalt blue halterneck ballgown with a midnight black draped shrug bolero and wide-brim fedora hat. Designed with a fitted ruched bodice and an expansive, floor-sweeping radial circle skirt that gathers monumental volume, this look brings bold contemporary grandeur and dramatic presence to African haute couture.',
+    inspiration:
+      'Inspired by the regal authority of traditional African ceremonial robes, the deep spiritual symbolism of cobalt and indigo dyes in West African royal attire, and the unapologetic confidence of modern high-fashion styling. The juxtaposition of a grand ballroom skirt with a structured fedora and light azure handbag creates an arresting dialogue between timeless elegance and modern editorial attitude.',
+    designDetails: [
+      'Saturated royal cobalt blue silk taffeta gown with luminous surface sheen',
+      'Fitted halterneck bodice with soft plunging wrap front neckline',
+      'Expansive multi-meter pleated ballgown skirt pooling sculpturally across the floor',
+      'Cropped midnight black bolero shrug with draped three-quarter sleeves',
+      'Signature black wide-brim couture fedora hat',
+      'Coordinated blue beaded choker necklace and two-tone structured handbag',
+    ],
+    culturalStory:
+      'In Nigerian ceremonial dressing, blue—especially deep royal blues and indigos—has represented spiritual royalty, dignity, and elevated status for centuries.\n\nCaptured in a dramatic pavilion runway setting, this look celebrates the African woman as both sovereign and modern muse—commanding attention through sweeping scale, vivid monochromatic intensity, and effortless poise.',
+    designPhilosophy:
+      '> Command every room with unapologetic radiance.\n\nCouture should evoke emotion before a single word is spoken. The sweeping cobalt skirt is architecture in motion, giving the wearer an undeniable presence of regal dignity.',
+    silhouette: 'Fitted Halter • Radial Ballgown Skirt • Cropped Bolero',
+    keyElements: [
+      'Royal Cobalt Silk Taffeta',
+      'Radial Circle Ballgown Skirt',
+      'Contoured Halter Bodice',
+      'Noir Bolero Shrug',
+      'Couture Fedora Styling',
+    ],
+    story:
+      'Photographed backstage and on the hall steps during a major fashion showcase, this look embodies the electric energy of the runway. Surrounded by the raw architecture of the exhibition pavilion and tiered textile creations of fellow artisans, the model sits in grounded serenity, letting the royal blue gown billow like a pool of pure liquid color.',
+    process: [
+      'Over twelve meters of premium royal cobalt taffeta calculated and pattern-cut into seamless radial flare panels.',
+      'Hand-pleated waist transition reinforced with internal grosgrain stay tape to support the sweeping weight of the full skirt.',
+      'Tailored black bolero shrug cut with ergonomic raglan curve for fluid shoulder mobility and contrast.',
+    ],
+    heritage:
+      'Tracing lineage to royal coronation silhouettes and West African ceremonial volume, translated through precision contemporary ballgown patternmaking.',
+    sustainability:
+      'Zero-waste pattern layout for the multi-meter skirt flare; crafted for lifetime red carpet and cultural gala wear with repairable seams and adjustable bodice fastening.',
+    materials:
+      'Royal cobalt blue silk-blend taffeta, black crepe-satin bolero, internal cotton-grosgrain waist stay, concealed metal zip.',
+    credits: 'Creative Direction & Design: Mercy Ufuoma · Runway Presentation & Styling: Mercified Artistry | 2026.',
   },
 ];
 
