@@ -54,6 +54,7 @@ export const images = {
   bananaGrove: { src: '/images/collections/banana-grove-wrapper.jpg', alt: 'Look 08: Verdant Grove Draped Wrapper & Off-Shoulder Study — Nigerian Ankara wax wrapper beneath plantain canopy' },
   upcycledSachet: { src: '/images/collections/upcycled-sachet-mosaic.jpg', alt: 'Look 09: Chlorophyll Mosaic Upcycled Sachet Silhouette — black column dress with recycled green beverage sachet leaf scales' },
   palmSanctuary: { src: '/images/collections/palm-sanctuary-ankara.jpg', alt: 'Look 10: Palm Sanctuary Spiral Handkerchief Sundress — crimson and ochre solar-spiral Ankara dress between palm trees' },
+  africaPufferJacket: { src: '/images/collections/africa-quilted-puffer-jacket.jpg', alt: 'Look 11: Africa Map Quilted Puffer Jacket — cream quilted bomber with topographic Africa continent quilting and black leather trim' },
   aboutHouse: { src: '/images/about-designer.png', alt: 'Onobrorhie Mercy Ufuoma — designer portrait in red couture gown with flowing scarf' },
   houseSection: { src: '/images/about-the-house.png', alt: 'Mercified Artistry — red couture gown with structured capelet, beaded clutch and sequin detailing' },
   designPhilosophy: { src: '/images/design-philosophy.png', alt: 'Design Philosophy — sculptural teal and gold couture gown with handcrafted reed waist adornments by Mercified Artistry' },
@@ -603,6 +604,57 @@ export const works: Work[] = [
     materials:
       '100% African cotton Ankara print, natural cotton elastic shirring, metallic gold embroidery yarn.',
     credits: 'Creative Direction: Mercy Ufuoma · Location: Delta Palm Sanctuary Editorial | 2026.',
+  },
+  {
+    slug: 'look-11',
+    label: 'LOOK 11',
+    title: 'Africa Map Quilted Puffer Jacket',
+    category: 'Ready-to-Wear',
+    year: '2026',
+    season: '2026 Autumn/Winter',
+    atelierHours: '145 Atelier Hours',
+    techniqueFocus: 'Topographic Quilting & Leather Binding',
+    shape: 'portrait',
+    image: images.africaPufferJacket,
+    gallery: [images.africaPufferJacket],
+    designConcept:
+      'A structured quilted puffer jacket that fuses contemporary streetwear silhouette with deeply African identity. The centrepiece is a raised topographic Africa continent map, quilted in concentric elevation lines across the chest, transforming a classic bomber into a wearable statement of continental pride and artisanal precision.',
+    inspiration:
+      'Inspired by topographic cartography and the physical landscape of the African continent. The concentric quilting lines echo elevation contour maps — mountains, valleys and plateaus rendered in thread on fabric — reimagining the continent not as a flat symbol but as a three-dimensional living terrain.',
+    designDetails: [
+      'Raised topographic Africa silhouette quilted in concentric contour lines across the front panels',
+      'Classic diamond quilting on sleeves and side panels for textural contrast',
+      'Black genuine leather binding at collar, cuffs and waistband hem',
+      'Centre-front metal zip closure with leather pull tab',
+      'Structured bomber silhouette with slightly cropped waist fit',
+      'Cream/ivory quilted shell with polyester wadding insulation',
+    ],
+    culturalStory:
+      'The Africa map is not decoration — it is declaration. Wearing the continent on your chest is an act of identity, belonging, and pride. In Nigerian fashion, outerwear has traditionally been understated, but this jacket challenges that norm by making a bold, unapologetic cultural statement through craft.\n\nThe topographic quilting honours the physical reality of Africa — its highlands, its rift valleys, its coastal plains — rendered in the universal language of contour lines that cartographers have used for centuries.',
+    designPhilosophy:
+      '> Wear your roots, carry your terrain.\n\nFashion should be armour and identity. This jacket is built to protect the body and proclaim the spirit — a wearable map of home for every African, wherever they stand in the world.',
+    silhouette: 'Cropped Bomber • Quilted Shell • Structured Shoulders',
+    keyElements: [
+      'Africa Map Quilting',
+      'Topographic Contour Lines',
+      'Diamond Quilting',
+      'Leather Trim',
+      'Bomber Silhouette',
+    ],
+    story:
+      'Photographed on a dressmaker\'s mannequin in the Mercified Artistry atelier in Abraka, this jacket captures the hands-on, workshop-born spirit of the house. The raw atelier setting — cutting tables, fabric rolls, golden mannequin stand — frames the jacket as an object of genuine craft rather than industrial production.',
+    process: [
+      'Africa continent template drafted from geographic survey data, scaled and translated into quilting stitch path.',
+      'Concentric contour lines stitched outward from the continental centre using industrial quilting machine guided by hand templates.',
+      'Diamond quilting applied separately to sleeve and side panels, then precisely joined at the shoulder and underarm seams.',
+    ],
+    heritage:
+      'Rooted in the Pan-African tradition of wearing cultural symbols as everyday identity markers, elevated through European quilting and leather-binding techniques into a contemporary ready-to-wear garment.',
+    sustainability:
+      'Constructed with responsibly sourced polyester wadding and vegetable-tanned leather trim. Designed for multi-season durability rather than single-wear disposal.',
+    materials:
+      'Quilted polyester-cotton blend shell, polyester wadding insulation, vegetable-tanned genuine leather trim, metal zip hardware, cotton-polyester lining.',
+    credits: 'Creative Direction: Mercy Ufuoma · Atelier Craft: Mercified Artistry Abraka | 2026.',
   },
 ];
 

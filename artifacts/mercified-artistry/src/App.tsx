@@ -952,24 +952,21 @@ function PortfolioPage() {
             <span className="portfolio-banner-badge">Archive</span>
           </div>
           <h1 className="portfolio-banner-title serif">Our Work</h1>
-          <p className="portfolio-banner-desc">Ten handcrafted pieces, each rooted in African culture, made by hand, and built to last.</p>
+          <p className="portfolio-banner-desc">Eleven handcrafted pieces, each rooted in African culture, made by hand, and built to last.</p>
           <div className="portfolio-banner-rule" />
           <div className="portfolio-banner-stats">
             <div className="pbs-tile">
               <span className="pbs-val">{works.length}</span>
               <span className="pbs-lbl">Pieces</span>
             </div>
-            <div className="pbs-divider" />
             <div className="pbs-tile">
-              <span className="pbs-val">1,735+</span>
+              <span className="pbs-val">1,880+</span>
               <span className="pbs-lbl">Hours of Handwork</span>
             </div>
-            <div className="pbs-divider" />
             <div className="pbs-tile">
               <span className="pbs-val">100%</span>
               <span className="pbs-lbl">African Heritage</span>
             </div>
-            <div className="pbs-divider" />
             <div className="pbs-tile">
               <span className="pbs-val">Zero</span>
               <span className="pbs-lbl">Waste or Plastic</span>
