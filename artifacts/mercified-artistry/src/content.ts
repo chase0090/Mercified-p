@@ -52,9 +52,8 @@ export const images = {
   coralCrown: { src: '/images/collections/coral-gold-crown.png', alt: 'Look 06: Sovereign Coral Cage Avant-Garde Crown — sculptural red coral wire cage headpiece with hand-beaten gold brass wings' },
   tealReedFull: { src: '/images/collections/teal-reed-sculptural-full.png', alt: 'Look 07: Botanical Reed & Damask Couture Silhouette — teal and gold damask mini with natural palm-reed sunburst hip architecture' },
   bananaGrove: { src: '/images/collections/banana-grove-wrapper.jpg', alt: 'Look 08: Verdant Grove Draped Wrapper & Off-Shoulder Study — Nigerian Ankara wax wrapper beneath plantain canopy' },
-  upcycledSachet: { src: '/images/collections/upcycled-sachet-mosaic.jpg', alt: 'Look 09: Chlorophyll Mosaic Upcycled Sachet Silhouette — black column dress with recycled green beverage sachet leaf scales' },
-  palmSanctuary: { src: '/images/collections/palm-sanctuary-ankara.jpg', alt: 'Look 10: Palm Sanctuary Spiral Handkerchief Sundress — crimson and ochre solar-spiral Ankara dress between palm trees' },
-  africaPufferJacket: { src: '/images/collections/africa-quilted-puffer-jacket.jpg', alt: 'Look 11: Africa Map Quilted Puffer Jacket — cream quilted bomber with topographic Africa continent quilting and black leather trim' },
+  palmSanctuary: { src: '/images/collections/palm-sanctuary-ankara.jpg', alt: 'Look 09: Palm Sanctuary Spiral Handkerchief Sundress — crimson and ochre solar-spiral Ankara dress between palm trees' },
+  africaPufferJacket: { src: '/images/collections/africa-quilted-puffer-jacket.jpg', alt: 'Look 10: Africa Map Quilted Puffer Jacket — cream quilted bomber with topographic Africa continent quilting and black leather trim' },
   aboutHouse: { src: '/images/about-designer.png', alt: 'Onobrorhie Mercy Ufuoma — designer portrait in red couture gown with flowing scarf' },
   houseSection: { src: '/images/about-the-house.png', alt: 'Mercified Artistry — red couture gown with structured capelet, beaded clutch and sequin detailing' },
   designPhilosophy: { src: '/images/design-philosophy.png', alt: 'Design Philosophy — sculptural teal and gold couture gown with handcrafted reed waist adornments by Mercified Artistry' },
@@ -506,57 +505,6 @@ export const works: Work[] = [
   {
     slug: 'look-09',
     label: 'LOOK 09',
-    title: 'Chlorophyll Mosaic Upcycled Sachet Silhouette',
-    category: 'Atelier Craft',
-    year: '2026',
-    season: 'SS26 Haute Couture',
-    atelierHours: '215 Atelier Hours',
-    techniqueFocus: 'Post-Consumer Foil/Sachet Mosaic Appliqué & Column Tailoring',
-    shape: 'portrait',
-    image: images.upcycledSachet,
-    gallery: [images.upcycledSachet],
-    designConcept:
-      'A groundbreaking sustainable couture ensemble pairing a structured black sweetheart column mini-dress and sheer illusion trouser legs with hundreds of meticulously cut, folded, and heat-contoured recycled green beverage sachets. Radiating across the decolletage and hips like lush botanical scales or iridescent beetle wings, this look transforms urban single-use waste into luminous, jewel-like ecological haute couture.',
-    inspiration:
-      'Inspired by the urgency of African environmental conservation, circular economy movements, and the natural protective armor of pangolin scales and rain-forest foliage. The piece turns street pollution into a high-fashion critique and celebration of regenerative design.',
-    designDetails: [
-      'Hundreds of hand-cut recycled beverage sachet scales shaped into dimensional leaf petals',
-      'Asymmetrical off-the-shoulder black satin bodice with structured internal support',
-      'Lush emerald green metallic and foil leaf mosaic cascading over the bust and hips',
-      'Coordinated architectural upcycled sachet envelope clutch',
-      'Sheer black chiffon illusion pant legs creating elegant vertical column elongation',
-      'Reinforced concealed back zip with edge-stitched satin binding',
-    ],
-    culturalStory:
-      'Across modern African urban centers, discarded plastic sachets present one of the most visible environmental challenges.\n\nMercified Artistry answers this crisis not with despair, but with radical creativity—transforming street-collected packaging into an iridescent botanical tapestry that honors the resilience of the African ecosystem.',
-    designPhilosophy:
-      '> Waste is merely raw material awaiting artistic dignity.\n\nTrue luxury in the 21st century must heal the earth. We believe African couture can lead the world in circular, zero-waste innovation without sacrificing elegance.',
-    silhouette: 'Fitted Column • Botanical Mosaic • Sheer Overlay',
-    keyElements: [
-      'Upcycled Foil Sachets',
-      'Botanical Mosaic',
-      'Circular Fashion',
-      'Sheer Column Legs',
-      'Eco-Activism',
-    ],
-    story:
-      'Photographed along a sun-drenched pathway in rural Abraka bordered by banana trees, this dress captures a provocative dialogue between nature and human consumption. The gleaming green sachet leaves catch natural sunlight exactly like fresh dew-soaked plantain leaves.',
-    process: [
-      'Post-consumer beverage sachets gathered, sanitized, and sorted by green color gradients.',
-      'Individual petals precision-cut and heat-sealed to prevent fraying and maintain three-dimensional curvature.',
-      'Hand-stitched in overlapping organic leaf sequences across a reinforced cotton-satin foundation.',
-    ],
-    heritage:
-      'Drawing on the historic African ethos of resourceful ingenuity and repurposing, elevating communal reclamation to the global runway.',
-    sustainability:
-      'Constructed with over 90% reclaimed single-use plastics and packaging that would otherwise litter local waterways. Zero virgin synthetic embellishments.',
-    materials:
-      'Upcycled beverage packaging foil, reclaimed polyester satin, pure silk organza sheer legs, cotton thread.',
-    credits: 'Creative Direction: Mercy Ufuoma · Eco-Atelier Craft: Mercified Artistry Abraka | 2026.',
-  },
-  {
-    slug: 'look-10',
-    label: 'LOOK 10',
     title: 'Palm Sanctuary Spiral Handkerchief Sundress',
     category: 'Lookbook Studies',
     year: '2026',
@@ -606,8 +554,8 @@ export const works: Work[] = [
     credits: 'Creative Direction: Mercy Ufuoma · Location: Delta Palm Sanctuary Editorial | 2026.',
   },
   {
-    slug: 'look-11',
-    label: 'LOOK 11',
+    slug: 'look-10',
+    label: 'LOOK 10',
     title: 'Africa Map Quilted Puffer Jacket',
     category: 'Ready-to-Wear',
     year: '2026',
