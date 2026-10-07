@@ -55,6 +55,9 @@ export const images = {
   palmSanctuary: { src: '/images/collections/palm-sanctuary-ankara.jpg', alt: 'Look 09: Palm Sanctuary Spiral Handkerchief Sundress — crimson and ochre solar-spiral Ankara dress between palm trees' },
   africaPufferJacket: { src: '/images/collections/africa-quilted-puffer-jacket.jpg', alt: 'Look 10: Africa Map Quilted Puffer Jacket — cream quilted bomber with topographic Africa continent quilting and black leather trim' },
   cobaltBallgown: { src: '/images/collections/royal-cobalt-ballgown.jpg', alt: 'Look 11: Royal Cobalt Halter Ballgown & Noir Shrug — voluminous royal cobalt blue silk taffeta ballgown with cropped bolero, fedora and azure handbag' },
+  adireKimono: { src: '/images/collections/adire-kimono-emerald-bustier.png', alt: 'Look 12: Adire Mosaic Kimono & Emerald Bow Bustier — handcrafted batik circle cape paired with architectural forest green sweetheart bow corsetry' },
+  noirKaftanTrio: { src: '/images/collections/noir-silk-tassel-kaftans.png', alt: 'Look 13: Noir Silk Tassel Kaftan Sisterhood Trio — three coordinating midnight black hammered silk boubous with hand-knotted cream tassels' },
+  handloomWeaving: { src: '/images/collections/ancestral-handloom-weaving.jpg', alt: 'Look 14: Indigenous Handloom Heritage & Loom Weaver Archive — traditional upright wooden loom weaving of handspun Nigerian ceremonial textiles' },
   aboutHouse: { src: '/images/about-designer.png', alt: 'Onobrorhie Mercy Ufuoma — designer portrait in red couture gown with flowing scarf' },
   houseSection: { src: '/images/about-the-house.png', alt: 'Mercified Artistry — red couture gown with structured capelet, beaded clutch and sequin detailing' },
   designPhilosophy: { src: '/images/design-philosophy.png', alt: 'Design Philosophy — sculptural teal and gold couture gown with handcrafted reed waist adornments by Mercified Artistry' },
@@ -655,6 +658,156 @@ export const works: Work[] = [
     materials:
       'Royal cobalt blue silk-blend taffeta, black crepe-satin bolero, internal cotton-grosgrain waist stay, concealed metal zip.',
     credits: 'Creative Direction & Design: Mercy Ufuoma · Runway Presentation & Styling: Mercified Artistry | 2026.',
+  },
+  {
+    slug: 'look-12',
+    label: 'LOOK 12',
+    title: 'Adire Mosaic Kimono & Emerald Bow Bustier',
+    category: 'Ready-to-Wear',
+    year: '2026',
+    season: '2026 Ready-to-Wear Capsule',
+    atelierHours: '115 Atelier Hours',
+    techniqueFocus: 'Hand-Resist Batik Kimono Drape & Architectural Satin Bow Corsetry',
+    shape: 'portrait',
+    image: images.adireKimono,
+    gallery: [images.adireKimono],
+    designConcept:
+      'A playful yet refined dialogue between artisanal Nigerian resist-dye textiles and structural couture separates. The pairing spotlights an airy, open-front Adire wax-resist kimono cape emblazoned with concentric circle motifs in magenta, cyan, and violet, worn alongside a sculptural forest green duchess satin sweetheart bustier anchored by an oversized architectural bow and fluid wide-leg noir trousers.',
+    inspiration:
+      'Inspired by modern sisterhood, friendship, and the everyday versatility of African print dressing. The look celebrates how young African women style bespoke heritage pieces for contemporary social life—effortlessly blending traditional wax-resist crackle patterns with polished, red-carpet-worthy corsetry.',
+    designDetails: [
+      'Oversized boxy kimono cape in hand-resist dyed cotton with vibrant magenta and cobalt bullseye rondels',
+      'Emerald green duchess satin boned bustier with an origami sweetheart bow centrepiece',
+      'Integrated print accent panel echoing the kimono palette at the bustier waist',
+      'High-waisted tailored black wide-leg trousers with clean front pleating',
+      'Soft contrast piped borders along kimono sleeves and hemline',
+    ],
+    culturalStory:
+      'In contemporary African urban culture, fashion is social expression and communal joy. This look captures two friends sharing an unscripted, radiant moment in Abraka, demonstrating that haute-artisanal technique belongs not only on formal runways, but in everyday moments of sisterhood, self-assurance, and celebration.',
+    designPhilosophy:
+      '> Tradition should be worn lightly, shared freely, and lived joyfully.\n\nAfrican textile craft is not a museum relic—it is living fabric designed to accompany women through laughter, companionship, and everyday brilliance.',
+    silhouette: 'Flowing Kimono Cape • Structured Bow Bustier • Wide-Leg Trouser',
+    keyElements: [
+      'Wax-Resist Adire Rondels',
+      'Emerald Satin Bow Bustier',
+      'Draped Kimono Silhouette',
+      'Modern Sisterhood',
+      'Tailored Palazzo Trouser',
+    ],
+    story:
+      'Photographed candidly in an Abraka studio staircase, the warmth between the models brings the clothing to life. The iridescent sheen of the forest green satin plays off the graphic energy of the dyed kimono, creating a rich visual contrast that feels modern and approachable.',
+    process: [
+      'Wax-resist stamp pattern applied by hand to pure cotton poplin before vat dyeing in multi-color stages.',
+      'Sweetheart bustier structured with multi-panel boning and finished with an architectural hand-folded bow.',
+      'Wide kimono sleeves drafted with dropped shoulder seam to ensure airy, breezy movement.',
+    ],
+    heritage:
+      'Reinterprets the Yoruba Adire and Nigerian batik traditions into modern versatile ready-to-wear separates.',
+    sustainability:
+      'Low-impact non-toxic vat dyes; zero-waste pattern drafting utilized for rectangular kimono panels.',
+    materials:
+      '100% African cotton wax-resist print, premium duchess satin, lightweight cotton lining, boning armature.',
+    credits: 'Creative Direction: Mercy Ufuoma · Studio Styling & Craft: Mercified Artistry Abraka | 2026.',
+  },
+  {
+    slug: 'look-13',
+    label: 'LOOK 13',
+    title: 'Noir Silk Tassel Kaftan Sisterhood Trio',
+    category: 'Lookbook Studies',
+    year: '2026',
+    season: '2026 Atelier Celebration Capsule',
+    atelierHours: '130 Atelier Hours',
+    techniqueFocus: 'Drawstring Ruching, Hand-Finished Tassels & Fluid Silk Satin Tailoring',
+    shape: 'portrait',
+    image: images.noirKaftanTrio,
+    gallery: [images.noirKaftanTrio],
+    designConcept:
+      'A celebratory capsule of three coordinating midnight black hammered-silk boubou kaftans, each engineered with adjustable center-front drawstring ruching, graceful batwing sleeves, and hand-knotted cream silk tassels. Photographed in an ecstatic moment of communal joy, this look honors the African tradition of "Aso-Ebi" (family uniform cloth) reinterpreted as minimalist monochrome luxury.',
+    inspiration:
+      'Inspired by the sacred tradition of Aso-Ebi—the West African practice of wearing coordinating garments to signify solidarity, sisterhood, and shared celebration. By paring back flamboyant patterns to pure lustrous black silk punctuated with ivory tassels, the silhouette refocuses attention on the warmth, radiant laughter, and shared bond of the women wearing them.',
+    designDetails: [
+      'Fluid floor-length black hammered silk satin with liquid-like drape',
+      'V-neckline bordered by delicate ivory hand-twisted cord and dual cascading tassels',
+      'Adjustable front drawstring channel allowing custom silhouette cinching or relaxed drape',
+      'Subtle white tie-dye brushwork accents revealed at the inner hemline fold',
+      'Ergonomic batwing sleeve design offering maximum comfort and dramatic gestural flutter',
+    ],
+    culturalStory:
+      'Aso-Ebi literally translates in Yoruba to "cloth of the family." Across West Africa, when women gather in shared cloth, it represents impenetrable solidarity and communal pride.\n\nCaptured with arms linked and hands raised in pure joy, this photograph captures the true soul of Mercified Artistry—clothing that exists to elevate community, self-expression, and uninhibited celebration.',
+    designPhilosophy:
+      '> When we wear the same cloth, we share the same heartbeat.\n\nTrue elegance is not solitude; it is community. These kaftans were created to make women feel unified, dignified, and joyous together.',
+    silhouette: 'Flowing Boubou • Adjustable Ruching • Batwing Flutter',
+    keyElements: [
+      'Aso-Ebi Sisterhood',
+      'Hammered Silk Satin',
+      'Hand-Knotted Tassels',
+      'Adjustable Drawstring Ruching',
+      'Monochrome Elegance',
+    ],
+    story:
+      'Captured against polished marble columns in an Abraka event pavilion, the three women radiate genuine jubilation. As they hold hands and wave, the fluid silk kaftans catch the ambient lights, creating deep liquid highlights that accentuate every move.',
+    process: [
+      'Continuous single-width silk fabric cut to eliminate shoulder seams for seamless drape.',
+      'Central drawstring channels edge-stitched with reinforced eyelets and matching silk bias tape.',
+      'Natural cotton and silk tassels custom-spun and hand-knotted by atelier craftswomen.',
+    ],
+    heritage:
+      'Evolving the historic West African boubou / grand bubu into modern minimalist evening leisurewear.',
+    sustainability:
+      'Biodegradable silk-cotton blend fabric; zero-waste drape pattern with no off-cuts discarded.',
+    materials:
+      'Hammered silk-cotton satin, natural cotton tassel threads, silk drawcords.',
+    credits: 'Creative Direction: Mercy Ufuoma · Celebration Capsule: Mercified Artistry Abraka | 2026.',
+  },
+  {
+    slug: 'look-14',
+    label: 'LOOK 14',
+    title: 'Indigenous Handloom Heritage & Loom Weaver Archive',
+    category: 'Atelier Craft',
+    year: '2026',
+    season: '2026 Living Heritage & Archive Study',
+    atelierHours: '240 Atelier Hours',
+    techniqueFocus: 'Traditional Upright Wooden Loom Weaving & Motif Shuttle Insertion',
+    shape: 'portrait',
+    image: images.handloomWeaving,
+    gallery: [images.handloomWeaving],
+    designConcept:
+      'An intimate atelier document recording the living heartbeat of African textile creation. Seated before an authentic traditional upright wooden loom, bathed in golden morning sun streaming through the window, an apprentice artisan works under the watchful eye of a master weaver, hand-threading warp yarns and inserting geometric indigo diamond weft supplementary floats into ceremonial handspun white cotton cloth.',
+    inspiration:
+      'Inspired by the centuries-old matrilineal handloom traditions of southern and eastern Nigeria—particularly Akwete, Aso-Oke, and Delta handwoven textiles. This photograph documents the transfer of generational knowledge from elder matriarch to the next generation, preserving the ancestral sacred geometry of African weaving.',
+    designDetails: [
+      'Authentic upright timber loom with hand-hewn wooden warp and cloth beams',
+      'Crisp handspun natural white cotton warp stretched under rigorous artisanal tension',
+      'Delicate geometric navy/indigo diamond and herringbone supplemental weft motifs',
+      'Traditional wooden weaving sword (apasa) used to beat weft threads into dense structural alignment',
+      'Documented inside the artisan cottage with raw sunbeam lighting and master weaver supervision',
+    ],
+    culturalStory:
+      'Before any scissors cut or any needle pierces, fabric must be born. In Nigerian textile history, the upright loom has been operated by women for centuries—weaving cloth for royalty, births, marriages, and sacred rites.\n\nThis archive entry honors the hands that weave the future of African fashion. Without the quiet dedication of these women at their wooden looms, contemporary African couture would have no soul.',
+    designPhilosophy:
+      '> Every thread is an ancestor\'s thought made tangible.\n\nWe cannot speak of African fashion without honoring the loom. True sustainable luxury begins at the source—with raw cotton, timber frames, human breath, and generational patience.',
+    silhouette: 'Living Loom Archive • Handwoven Textile • Matrilineal Knowledge',
+    keyElements: [
+      'Traditional Upright Loom',
+      'Akwete & Aso-Oke Heritage',
+      'Handspun Cotton Warp',
+      'Indigo Diamond Weft Motifs',
+      'Generational Mentorship',
+    ],
+    story:
+      'Photographed in a sunlit weaver\'s sanctuary, a shaft of radiant daylight cuts across the white loom threads. The young weaver concentrates with intense devotion, while her mentor stands behind in ceremonial print—a visual testament to the unbroken chain of African craftsmanship.',
+    process: [
+      'Raw Nigerian cotton hand-carded, spindle-spun, and sized before warping onto the wooden loom frame.',
+      'Supplementary weft floats hand-counted and inserted with wooden bone shuttles to form sacred geometric symbols.',
+      'Beaten thread by thread using hand-carved timber apasa swords to ensure uniform textile density.',
+    ],
+    heritage:
+      'Direct continuation of pre-colonial Nigerian handloom weaving traditions preserved by Delta, Igbo, and Yoruba women.',
+    sustainability:
+      'Zero electrical energy consumption; 100% locally farmed, rain-fed Nigerian cotton; natural vegetable indigo dye; heirloom wooden loom constructed from local timber.',
+    materials:
+      'Handspun 100% Nigerian rain-fed cotton, indigo plant-dyed cotton yarn, timber loom frame.',
+    credits: 'Textile Archiving: Mercy Ufuoma · Master Weaver Guild & Living Archive: Delta State, Nigeria | 2026.',
   },
 ];
 
